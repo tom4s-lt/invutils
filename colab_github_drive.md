@@ -54,3 +54,24 @@ Since we are now in the project_folder we created earlier in the google drive, w
 ```python
 ! git clone link/to/your/repo
 ```
+
+**Note** Since we were working with datasets for the example (it's nice info to have just in case):
+Finally, you have to upload the datasets to the drive first. It is fairly simple as all what you have to do is, to upload the dataset file inside the the ‘datasets’ folder under the clone repository. (There is no rule dictating that you should upload it to a folder inside the cloned repo. You can upload it anywhere inside the project_folder as long it is easily referenced and acceesible)
+
+
+### Step 4: Running repo code
+If you have an executable python file inside the cloned repo, you can run it using the following command after accessing the directory with that executable file.
+```python
+! python <executable_file.py>
+```
+
+Or else you can execute code directly from the colab cells. But first, you will have to import the functions from your git repo that are required for the execution. For example, let’s assume that you want to access a datset and the relavent functions are saved in a python file called file_handling.py under the subfolder ‘utilities’ in the cloned repo. To import these functions you can use the following code.
+```python
+from utilities.file_handling import *
+```
+
+
+# References/Bibliography
+More extensive - https://medium.com/analytics-vidhya/how-to-use-google-colab-with-github-via-google-drive-68efb23a42d
+- It creates a git repository on Drive
+Simpler - https://medium.com/@ashwindesilva/how-to-use-google-colaboratory-to-clone-a-github-repository-e07cf8d3d22b
