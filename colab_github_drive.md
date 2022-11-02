@@ -37,14 +37,14 @@ You can check the contents of the current folder in the runtime by typing the fo
 ! ls
 ```
 
-If the drive is mounted correcly, you would see that the current folder has a directory called ‘gdrive’. This is where you can find your googlde drive contents. Now, to access the project_folder we created earlier, type in the following and run the cell.
-
-
 ### Step 3: Change present working directory
+
+If the drive is mounted correcly, you would see that the current folder has a directory called ‘gdrive’. This is where you can find your googlde drive contents. Now, to access the project_folder we created earlier, type in the following and run the cell.
 
 Below shell command will set the present working directory to `/content/drive/MyDrive/Github`
 ```python
 %cd /content/drive/MyDrive/Github/
+%cd gdrive/My Drive/project_folder
 ```
 **Note:** Your Google Drive’s Home directory is at, `/content/drive/MyDrive/`
 
