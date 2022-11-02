@@ -52,6 +52,7 @@ Since we are now in the project_folder we created earlier in the google drive, w
 
 ```python
 ! git clone link/to/your/repo
+! git clone https://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@github.com/xtom4s/refresh_inver.git
 ```
 
 **Note** Since we were working with datasets for the example (it's nice info to have just in case):
