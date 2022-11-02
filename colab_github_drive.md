@@ -20,4 +20,14 @@ drive.mount('/content/drive')
 -   Click the link to authenticate user Google account
 -   Select the respective Google Drive account on which you want to mount and click on sign in
 -   Copy and Paste the authentication code into the input cell
--   Congrats! Your Google Drive is mounted,
+-   Congrats! Your Google Drive is mounted
+
+You have to confirm the linking - as with other google-accessing needs
+
+### Step 3: Change present working directory
+
+Below shell command will set the present working directory to `/content/drive/MyDrive/Github`
+```python
+%cd /content/drive/MyDrive/Github/
+```
+**Note:** Your Google Drive’s Home directory is at, `/content/drive/MyDrive/`
