@@ -11,16 +11,21 @@ https://medium.com/analytics-vidhya/how-to-use-google-colab-with-github-via-goog
 
 ### Step 1: Use colab notebook as a shell
 
+After you have pushed the project folder (without the dataset files) to the GitHub repo, you can go to your google drive and create a new folder (let’s call it the **project_folder**) to include your project related folders and files.
+Access the project_folder. Right click on the background and select ‘colaboratory’ from the ‘more’ option in the dropdown menu that appears with the right click.
+
+This starts a Colab notebook that will be used as a shell to run things in the directory chosen.
+
 ### Step 2: Mount Google Drive to Colab
 - Run the below script to mount your Google Drive
 ``` python
 from google.colab import drive  
 drive.mount('/content/drive')
 ```
--   Click the link to authenticate user Google account
--   Select the respective Google Drive account on which you want to mount and click on sign in
--   Copy and Paste the authentication code into the input cell
--   Congrats! Your Google Drive is mounted
+- Click the link to authenticate user Google account
+- Select the respective Google Drive account on which you want to mount and click on sign in
+- Copy and Paste the authentication code into the input cell
+- Congrats! Your Google Drive is mounted
 
 You have to confirm the linking - as with other google-accessing needs
 
@@ -31,3 +36,4 @@ Below shell command will set the present working directory to `/content/drive/My
 %cd /content/drive/MyDrive/Github/
 ```
 **Note:** Your Google Drive’s Home directory is at, `/content/drive/MyDrive/`
+
