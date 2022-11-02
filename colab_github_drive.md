@@ -9,12 +9,14 @@ https://medium.com/analytics-vidhya/how-to-use-google-colab-with-github-via-goog
 
 ![image](https://user-images.githubusercontent.com/71655945/199617740-382b3c25-3ae2-4236-9ad6-ba581abe9138.png)
 
+
 ### Step 1: Use colab notebook as a shell
 
 After you have pushed the project folder (without the dataset files) to the GitHub repo, you can go to your google drive and create a new folder (let’s call it the **project_folder**) to include your project related folders and files.
 Access the project_folder. Right click on the background and select ‘colaboratory’ from the ‘more’ option in the dropdown menu that appears with the right click.
 
 This starts a Colab notebook that will be used as a shell to run things in the directory chosen.
+
 
 ### Step 2: Mount Google Drive to Colab
 Since we plan to store our project realted files in the **project_folder** we created earlier, we have to mount our google drive in to this runtime. In order to do that, type in the following in the first cell of your colab and run the cell.
@@ -38,6 +40,7 @@ You can check the contents of the current folder in the runtime by typing the fo
 
 If the drive is mounted correcly, you would see that the current folder has a directory called ‘gdrive’. This is where you can find your googlde drive contents. Now, to access the project_folder we created earlier, type in the following and run the cell.
 
+
 ### Step 3: Change present working directory
 
 Below shell command will set the present working directory to `/content/drive/MyDrive/Github`
@@ -46,3 +49,8 @@ Below shell command will set the present working directory to `/content/drive/My
 ```
 **Note:** Your Google Drive’s Home directory is at, `/content/drive/MyDrive/`
 
+Since we are now in the project_folder we created earlier in the google drive, we can clone our GitHub repository inside this folder. For that, type in the following and run the cell.
+
+```python
+! git clone link/to/your/repo
+```
