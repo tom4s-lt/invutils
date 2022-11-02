@@ -7,5 +7,5 @@ https://medium.com/analytics-vidhya/how-to-use-google-colab-with-github-via-goog
 2. **GitHub** is a code hosting platform for version control and Collaboration. It lets you and others work together on projects from anywhere. Thus allowing seamless collaboration without compromising the integrity of the original project.
 3. **Google Drive** provides file storage and synchronization service, which allows users to store files on their servers, synchronize files across devices, and share files. It offers 15 GB of free storage to users.
 
-![image](https://user-images.githubusercontent.com/71655945/199617740-382b3c25-3ae2-4236-9ad6-ba581abe9138.png)
+![image|400](https://user-images.githubusercontent.com/71655945/199617740-382b3c25-3ae2-4236-9ad6-ba581abe9138.png)
 
