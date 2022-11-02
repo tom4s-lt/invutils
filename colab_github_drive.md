@@ -1,7 +1,6 @@
 # How to use Google Colab with GitHub via Google Drive
 
 Tutorial for using **Google Colab** can be used with **GitHub** and also use Google Drive as a cloud **Data Storage**.
-https://medium.com/analytics-vidhya/how-to-use-google-colab-with-github-via-google-drive-68efb23a42d
 
 1. Colaboratory, or **Colab** for short, is a product from Google Research. It allows anybody to write and execute arbitrary python code through the browser, and is especially well suited to machine learning, data analysis and education.
 2. **GitHub** is a code hosting platform for version control and Collaboration. It lets you and others work together on projects from anywhere. Thus allowing seamless collaboration without compromising the integrity of the original project.
