@@ -17,6 +17,8 @@ Access the project_folder. Right click on the background and select ‘colaborat
 This starts a Colab notebook that will be used as a shell to run things in the directory chosen.
 
 ### Step 2: Mount Google Drive to Colab
+Since we plan to store our project realted files in the **project_folder** we created earlier, we have to mount our google drive in to this runtime. In order to do that, type in the following in the first cell of your colab and run the cell.
+
 - Run the below script to mount your Google Drive
 ``` python
 from google.colab import drive  
@@ -27,7 +29,14 @@ drive.mount('/content/drive')
 - Copy and Paste the authentication code into the input cell
 - Congrats! Your Google Drive is mounted
 
-You have to confirm the linking - as with other google-accessing needs
+You have to confirm the linking - as with other google-accessing needs.
+
+You can check the contents of the current folder in the runtime by typing the following and running the cell.
+```python
+! ls
+```
+
+If the drive is mounted correcly, you would see that the current folder has a directory called ‘gdrive’. This is where you can find your googlde drive contents. Now, to access the project_folder we created earlier, type in the following and run the cell.
 
 ### Step 3: Change present working directory
 
