@@ -72,6 +72,8 @@ from utilities.file_handling import *
 
 
 # References/Bibliography
+Simpler - https://medium.com/@ashwindesilva/how-to-use-google-colaboratory-to-clone-a-github-repository-e07cf8d3d22b
 More extensive - https://medium.com/analytics-vidhya/how-to-use-google-colab-with-github-via-google-drive-68efb23a42d
 - It creates a git repository on Drive
-Simpler - https://medium.com/@ashwindesilva/how-to-use-google-colaboratory-to-clone-a-github-repository-e07cf8d3d22b
+
+More Extensive - https://towardsdatascience.com/google-drive-google-colab-github-dont-just-read-do-it-5554d5824228
