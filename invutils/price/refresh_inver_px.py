@@ -162,5 +162,5 @@ export_list = []
 export_list.append(['ticker'] + px_result_df.columns.tolist())
 export_list.extend(px_result_df.fillna(0).reset_index().values.tolist())
 wb = gc.open_by_url(sensitive_data_dic['directories']['write']['path'])
-sheet = wb.worksheet(sensitive_data_dic['directories']['write']['price_table'])
+sheet = wb.worksheet(sensitive_data_dic['directories']['write']['tables']['price_table'])
 sheet.update("A1", export_list) # Puede ser que no tenga que usar values
