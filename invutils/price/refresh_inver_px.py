@@ -38,6 +38,8 @@ creds, _ = default()
 
 gc = gspread.authorize(creds)
 
+from price_reqs import coingecko_current_px_req, coingecko_historical_px_req, defillama_historical_px_req
+
 """
 El script sirve para buscar:
 
@@ -125,90 +127,6 @@ pool_data_df.set_index('pool_id', drop = True, inplace = True)
 sheet = db.worksheet(sensitive_data_dic['directories']['wallet_table'])
 wallet_data_df = pd.DataFrame(sheet.get_all_records())
 wallet_data_df.set_index('wallet_id', drop = True, inplace = True)
-
-
-"""
-Defniciones de funciones:
-1. coingeckoHistoricalPxReq()
-2. defillamaHistoricalPxReq()
-"""
-
-def coingeckoHistoricalPxReq(id_cg, days = 31):
-  """ Get 31 past days price of coin
-  Args:
-    coingecko id (string)
-    days (int): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data) - UTC time for get request
-  Outputs:
-    df (dataframe): timeseries df containing last price for each day queued
-  """
-  url = api_data_dic["endpoints"]["coingecko"] + f'/coins/{id_cg}/market_chart'
-  res = rq.get(url, params = {'vs_currency': 'usd', 'days': days})
-  assert res.status_code == 200, "API Response Problem"
-
-  prices = res.json()['prices']
-  df = pd.DataFrame(prices)
-  df[0] = pd.to_datetime(df[0], unit = 'ms')
-  df.columns = ['date', id_cg]
-  df.set_index('date', inplace = True)
-  df.resample('D').last()
-
-  return df
-
-
-def defillamaHistoricalPxReq(id_llama, timestamp):
-  """ Get 31 past days price of coin
-  Args:
-    coingecko id (string)
-    days (int): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data)
-  Outputs:
-    df (dataframe): timeseries df containing price for tokens asked for the timestamp asked
-  """
-  url = f"https://coins.llama.fi/prices/historical/{timestamp}/{id_llama}"
-  res = rq.get(url)
-  assert res.status_code == 200, "API Response Problem"
-  
-  prices = res.json()['coins']
-  data = []
-  for asset in prices:
-    data.append(
-        {'ticker': prices[asset]['symbol'].lower(), 'price': prices[asset]['price'], 'timestamp': datetime.fromtimestamp(timestamp)}
-    )
-  if len(data):
-    df = pd.DataFrame(data).pivot(index = 'timestamp' ,columns = 'ticker', values = 'price').resample('D').last()
-  else:
-    df = pd.DataFrame()
-
-  return df
-
-
-# def zapper_px_req(api_endpoint, api_key, token, token_address, network):
-#   dic_resultados_fx = {}
-#   credentials = api_key + ':'
-
-#   encodedBytes = base64.b64encode(credentials.encode("utf-8")) # https://www.base64encoder.io/python/
-#   encodedStr = str(encodedBytes, "utf-8")
-
-#   response_prices = requests.get(
-#       f"{api_endpoint}/prices/{token_address}?network={network}&timeFrame=year&currency=USD",
-#       headers={'Authorization': f"Basic {encodedStr}"}
-#   )
-
-#   assert response_prices.status_code == 200, "API Response Problem"
-  
-#   response_prices.json()['prices']
-  
-#   dic_resultados_fx[token] = {
-#       '0d': response_prices.json()['prices'][-1][1],
-#       '1d': response_prices.json()['prices'][-3][1],
-#       '7d': response_prices.json()['prices'][-9][1],
-#       '30d': response_prices.json()['prices'][-32][1]
-#   }
-
-#   return dic_resultados_fx
-
-
-################################################################################
-
 
 # COINGECKO - Px search
 data = []
