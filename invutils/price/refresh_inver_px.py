@@ -39,6 +39,7 @@ creds, _ = default()
 gc = gspread.authorize(creds)
 
 from price_reqs import coingecko_current_px_req, coingecko_historical_px_req, defillama_historical_px_req
+from sensitive_info import gen_sensitive_info
 
 """
 El script sirve para buscar:
@@ -73,68 +74,34 @@ OUTPUTS
   }
 """
 
-sensitive_data_dic = {
-# informacion relevante pero de uso privado - contiene el urldb y urlwrite
-    'input_output_urls': {
-        'url_inver_db': 'https://docs.google.com/spreadsheets/d/1XvCDYlolvZ1MZ-cfvx541xOO8W1Qq9U6cDAma5IQcWs',  # Google Sheets con las bases de datos de inputs en el formato que corresponde
-        'url_inver_sheet': 'https://docs.google.com/spreadsheets/d/1JXOGdaa_WTISZSbkM6rCAVlivlWdAWLoQRcWNEQ3rkg'  # Google sheets para escribir los resultados del script
-    },
-    'directories': {
-      'asset_table': 'asset_table',  # Sheet del workbook que tiene los assets
-      'pool_table': 'pool_table',  # Sheet del workbook que tiene los datos de pools
-      'wallet_table': 'wallet_table',  # Sheet del workbook que tiene los datos de wallets
-    },
-    'api_keys': {
-        'zapper': '51f7c56e-8c95-4943-bc7c-b4a986bd4646', # Zapper API Keys
-        'etherscan': 'M93JAJ8V3FCH1ID6R7XWZ3EW4KZRMDGSVH',  # Explorer API keys
-        'polygonscan': 'VDK4A93ZJ59EIYYM4V4GVZYIT2X1BIFPQQ',  # Explorer API keys
-        'bscscan': 'FC16WHHFC359G9ISH9P7CAA2YN2WS7Q6TM',  # Explorer API keys
-        'ftmscan': 'WRV1UVZD673DB7ZZHD5PKN9F6R3X2FXFE3',  # Explorer API keys
-        'snowtrace': 'YQX7NJNSK85KMCJBAFPN2CRAX3BUG3DY1B',  # Explorer API keys
-        'arbiscan': 'MB43XWJ4Z12WZ3FSG3UTQVCXSQG54G2XBZ',  # Explorer API keys
-        'optimistic.etherscan': 'USITPHA4WX6A5A4KWF3JVEPMED3BUY33MS',  # Explorer API keys
-    }
-}
-
-api_data_dic = { # Podria poner params de requests tambien aca pero puede ser mejor encapsularlos en la funcion - buena idea pero ver
-# informacion relevante de las apis que se usan (puede tener tambien los params de requests armados)
-  'endpoints': {
-      'coingecko': 'https://api.coingecko.com/api/v3',
-      'zapper': 'https://api.zapper.fi/v2',
-      'etherscan': 'https://api.etherscan.io/api?',
-      'polygonscan': 'https://api.polygonscan.com/api?',
-      'bscscan': 'https://api.bscscan.com/api?',
-      'ftmscan': 'https://api.ftmscan.com/api?',
-      'snowtrace': 'https://api.snowtrace.io/api?',
-      'arbiscan': 'https://api.arbiscan.io/api?',
-      'optimistic.etherscan': 'https://api-optimistic.etherscan.io/api?',
-    }
-}
+sensitive_data_dic = gen_sensitive_info()
 
 # Busqueda de las sheets del workbook que sirve como base de datos, son el input del script
 # Importacion de los inputs
 
-db = gc.open_by_url(sensitive_data_dic['input_output_urls']['url_inver_db'])
+db = gc.open_by_url(sensitive_data_dic['directories']['db']['path'])
 
-sheet = db.worksheet(sensitive_data_dic['directories']['asset_table'])
+sheet = db.worksheet(sensitive_data_dic['directories']['db']['tables']['asset_table'])
 asset_data_df = pd.DataFrame(sheet.get_all_records())
 asset_data_df.set_index('id', drop = True, inplace = True)
 
-sheet = db.worksheet(sensitive_data_dic['directories']['pool_table'])
+sheet = db.worksheet(sensitive_data_dic['directories']['db']['tables']['pool_table'])
 pool_data_df = pd.DataFrame(sheet.get_all_records())
 pool_data_df.set_index('pool_id', drop = True, inplace = True)
 
-sheet = db.worksheet(sensitive_data_dic['directories']['wallet_table'])
+sheet = db.worksheet(sensitive_data_dic['directories']['db']['tables']['wallet_table'])
 wallet_data_df = pd.DataFrame(sheet.get_all_records())
 wallet_data_df.set_index('wallet_id', drop = True, inplace = True)
+
+########################################################################################
 
 # COINGECKO - Px search
 data = []
 tickers_mapper = []
 for asset in asset_data_df.loc[asset_data_df.px_search == 'coingecko'].index:
   tickers_mapper.append(asset_data_df.loc[asset, 'ticker'])
-  data.append(coingeckoHistoricalPxReq(asset_data_df.loc[asset, 'coingecko_id']).resample('D').last()) # Para cada fecha queda el ultimo horario del dia UTC
-  time.sleep(2)
+  data.append(coingecko_historical_px_req(asset_data_df.loc[asset, 'coingecko_id']).resample('D').last()) # Para cada fecha queda el ultimo horario del dia UTC
+  time.sleep(5)
 
 px_result_df = pd.concat(data, axis = 1)
 px_result_df.columns = tickers_mapper
@@ -154,11 +121,11 @@ req_string = ''
 for asset in asset_data_df.loc[asset_data_df.px_search == 'defillama'].index:
   req_string += asset_data_df.loc[asset, 'defillama_id'] + ','
 
-data.append(defillamaHistoricalPxReq(req_string, time.mktime(now.timetuple())))
+data.append(defillama_historical_px_req(req_string, time.mktime(now.timetuple())))
 
 for timestamp in [d1, d7, d30]:
   unix = time.mktime(datetime.strptime(timestamp, "%Y/%m/%d").timetuple()) # Convierte a unix equivalente a ese dia 00:00 hs GMT/UTC - 21hs arg del dia anterior
-  data.append(defillamaHistoricalPxReq(req_string, unix))
+  data.append(defillama_historical_px_req(req_string, unix))
   time.sleep(2)
 
 px_result_df = pd.concat([px_result_df, pd.concat(data, axis = 0)], axis = 1)
@@ -194,6 +161,6 @@ for asset in px_result_df.index: # Para controlar cualquier cosa
 export_list = []
 export_list.append(['ticker'] + px_result_df.columns.tolist())
 export_list.extend(px_result_df.fillna(0).reset_index().values.tolist())
-wb = gc.open_by_url(sensitive_data_dic['input_output_urls']['url_inver_sheet'])
-sheet = wb.worksheet('px_input')
+wb = gc.open_by_url(sensitive_data_dic['directories']['write']['path'])
+sheet = wb.worksheet(sensitive_data_dic['directories']['write']['price_table'])
 sheet.update("A1", export_list) # Puede ser que no tenga que usar values
