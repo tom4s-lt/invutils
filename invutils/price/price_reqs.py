@@ -26,7 +26,7 @@ def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
   return df
 
 
-def coingecko_historical_px_req(id_cg:str =  'bitcoin', days:int = 31):
+def coingecko_historical_px_req(id_cg:str = 'bitcoin', days:int = 31):
   """ Get 31 past days price of coin
   Args:
     - coingecko id (string): coingecko id for the desired asset/coin/token
