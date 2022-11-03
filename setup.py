@@ -16,5 +16,4 @@ setup(name="inverutils",
 	url="https://github.com/xtom4s/inverutilities",
 	keywords="" ,
 	classifiers=["Programming Language :: Python :: 3","License :: OSI Approved :: MIT License","Operating System :: OS Independent"],
-	python_requires=">=3.6",
 	install_requires=["pandas","time","datetime","requests"])
