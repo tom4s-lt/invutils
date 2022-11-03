@@ -38,8 +38,8 @@ creds, _ = default()
 
 gc = gspread.authorize(creds)
 
-from price_reqs import coingecko_current_px_req, coingecko_historical_px_req, defillama_historical_px_req
-from sensitive_info import gen_sensitive_info
+from .price_reqs import coingecko_current_px_req, coingecko_historical_px_req, defillama_historical_px_req
+from .sensitive_info import gen_sensitive_info
 
 """
 El script sirve para buscar:
