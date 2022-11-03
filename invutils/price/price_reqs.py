@@ -20,13 +20,15 @@ def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
   url = "https://api.coingecko.com/api/v3/simple/price"
   params = {'ids': id_cg, 'vs_currencies': vs_currencies}
   res = rq.get(url, params = params)
+  assert res.status_code == 200, "API Response Problem: " + str(res)
+    
   df = pd.DataFrame(res.json()).T
   df.columns = ['price_usd']
     
   return df
 
 
-def coingecko_historical_px_req(id_cg:str = 'bitcoin', days:int = 31):
+def coingecko_historical_px_req(id_cg:str =  'bitcoin', days:int = 31):
   """ Get 31 past days price of coin
   Args:
     - coingecko id (string): coingecko id for the desired asset/coin/token
@@ -37,7 +39,7 @@ def coingecko_historical_px_req(id_cg:str = 'bitcoin', days:int = 31):
   
   url ='https://api.coingecko.com/api/v3' + f'/coins/{id_cg}/market_chart'
   res = rq.get(url, params = {'vs_currency': 'usd', 'days': days})
-  assert res.status_code == 200, "API Response Problem"
+  assert res.status_code == 200, "API Response Problem: " + str(res)
 
   prices = res.json()['prices']
   df = pd.DataFrame(prices)
@@ -56,14 +58,14 @@ def defillama_historical_px_req(id_llama = 'ethereum:0xC02aaA39b223FE8D0A0e5C4F2
         - defillama id (str): defillama id for the desired token ('chain:address')
         - defillama ids (str): "id_llama1,id_llama2,...,id_llamaN"
         
-    - days (int): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data)
+    - timestamp (float): UNIX timestamp of time when you want historical prices
   Returns:
     - df (dataframe): timeseries df containing price for tokens asked for the timestamp asked
   """
 
   url = f"https://coins.llama.fi/prices/historical/{timestamp}/{id_llama}"
   res = rq.get(url)
-  assert res.status_code == 200, "API Response Problem"
+  assert res.status_code == 200, "API Response Problem: " + str(res)
   
   prices = res.json()['coins']
   data = []
