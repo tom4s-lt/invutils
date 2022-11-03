@@ -78,3 +78,31 @@ def defillama_historical_px_req(id_llama = 'ethereum:0xC02aaA39b223FE8D0A0e5C4F2
     df = pd.DataFrame()
 
   return df
+
+# def zapper_px_req(api_endpoint, api_key, token, token_address, network):
+#   dic_resultados_fx = {}
+#   credentials = api_key + ':'
+
+#   encodedBytes = base64.b64encode(credentials.encode("utf-8")) # https://www.base64encoder.io/python/
+#   encodedStr = str(encodedBytes, "utf-8")
+
+#   response_prices = requests.get(
+#       f"{api_endpoint}/prices/{token_address}?network={network}&timeFrame=year&currency=USD",
+#       headers={'Authorization': f"Basic {encodedStr}"}
+#   )
+
+#   assert response_prices.status_code == 200, "API Response Problem"
+  
+#   response_prices.json()['prices']
+  
+#   dic_resultados_fx[token] = {
+#       '0d': response_prices.json()['prices'][-1][1],
+#       '1d': response_prices.json()['prices'][-3][1],
+#       '7d': response_prices.json()['prices'][-9][1],
+#       '30d': response_prices.json()['prices'][-32][1]
+#   }
+
+#   return dic_resultados_fx
+
+
+################################################################################
