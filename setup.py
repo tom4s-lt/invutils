@@ -16,5 +16,4 @@ setup(name="inverutils",
 	url="https://github.com/xtom4s/inverutilities",
 	keywords="" ,
 	classifiers=["Programming Language :: Python :: 3","License :: OSI Approved :: MIT License","Operating System :: OS Independent"],
-	install_requires=["requests", "pandas", "datetime"])
-	# For some reason it fails with "time" inside, so it is removed as it is a built-in module
+	install_requires=["requests", "pandas", "datetime"]) # For some reason it fails with "time" inside, so it is removed as it is a built-in module
