@@ -13,6 +13,7 @@ def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
     - either of these:
       - coingecko id (string): coingecko id for the desired asset/coin/token
       - coingecko ids (string): "id_cg1,id_cg2,...,id_cgN"
+  
   Returns:
     - df (dataframe): index=id_cg & one column "price"=current price
   """
@@ -33,6 +34,7 @@ def coingecko_historical_px_req(id_cg:str =  'bitcoin', days:int = 31):
   Args:
     - coingecko id (string): coingecko id for the desired asset/coin/token
     - days (int): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data) - UTC time for get request
+  
   Returns:
     - df (dataframe): timeseries df containing last price for each day queued
   """
@@ -59,6 +61,7 @@ def defillama_historical_px_req(id_llama = 'ethereum:0xC02aaA39b223FE8D0A0e5C4F2
         - defillama ids (str): "id_llama1,id_llama2,...,id_llamaN"
         
     - timestamp (float): UNIX timestamp of time when you want historical prices
+  
   Returns:
     - df (dataframe): timeseries df containing price for tokens asked for the timestamp asked
   """
