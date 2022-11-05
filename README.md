@@ -5,3 +5,8 @@ For mention
 - John galt
 - Coingecko
 - DefiLlama
+
+To-do
+- Zapper functions for price search
+- Balance search
+- Documentation
