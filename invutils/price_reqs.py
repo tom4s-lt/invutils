@@ -10,12 +10,12 @@ import time
 def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
   """ Get current price of coin or coins (passed as csv to url)
   Args:
-    - either of these:
-      - coingecko id (string): coingecko id for the desired asset/coin/token
-      - coingecko ids (string): "id_cg1,id_cg2,...,id_cgN"
+    either of these:
+      coingecko id (string): coingecko id for the desired asset/coin/token
+      coingecko ids (string): "id_cg1,id_cg2,...,id_cgN"
   
   Returns:
-    - df (dataframe): index=id_cg & one column "price"=current price
+    df (dataframe): index=id_cg & one column "price"=current price
   """
   
   url = "https://api.coingecko.com/api/v3/simple/price"
@@ -32,11 +32,11 @@ def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
 def coingecko_historical_px_req(id_cg:str =  'bitcoin', days:int = 31):
   """ Get 31 past days price of coin
   Args:
-    - coingecko id (string): coingecko id for the desired asset/coin/token
-    - days (int): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data) - UTC time for get request
+    coingecko id (string): coingecko id for the desired asset/coin/token
+    days (int): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data) - UTC time for get request
   
   Returns:
-    - df (dataframe): timeseries df containing last price for each day queued
+    df (dataframe): timeseries df containing last price for each day queued
   """
   
   url ='https://api.coingecko.com/api/v3' + f'/coins/{id_cg}/market_chart'
@@ -56,14 +56,14 @@ def coingecko_historical_px_req(id_cg:str =  'bitcoin', days:int = 31):
 def defillama_historical_px_req(id_llama = 'ethereum:0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', timestamp = time.mktime(datetime.now().timetuple())):
   """ Get n-days price for tokens listed in defillama
   Args:
-    - either of these:
-        - defillama id (str): defillama id for the desired token ('chain:address')
-        - defillama ids (str): "id_llama1,id_llama2,...,id_llamaN"
+    either of these:
+      defillama id (str): defillama id for the desired token ('chain:address')
+      defillama ids (str): "id_llama1,id_llama2,...,id_llamaN"
         
-    - timestamp (float): UNIX timestamp of time when you want historical prices
+    timestamp (float): UNIX timestamp of time when you want historical prices
   
   Returns:
-    - df (dataframe): timeseries df containing price for tokens asked for the timestamp asked
+    df (dataframe): timeseries df containing price for tokens asked for the timestamp asked
   """
 
   url = f"https://coins.llama.fi/prices/historical/{timestamp}/{id_llama}"
