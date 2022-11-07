@@ -9,5 +9,6 @@ For mention
 To-do
 - Zapper functions for price search
 - json returns for every function (as well as df)
+- better exception handling for functions
 - Balance search
 - Documentation
