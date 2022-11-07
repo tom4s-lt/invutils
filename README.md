@@ -8,5 +8,6 @@ For mention
 
 To-do
 - Zapper functions for price search
+- json returns for every function (as well as df)
 - Balance search
 - Documentation
