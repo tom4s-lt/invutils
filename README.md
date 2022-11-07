@@ -7,6 +7,7 @@ For mention
 - John galt
 - Coingecko
 - DefiLlama
+- Zapper
 
 To-do
 - Zapper functions for price search
