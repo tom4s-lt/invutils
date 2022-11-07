@@ -143,24 +143,3 @@ def zapper_current_network_px_req(credentials:str, network:str):
 #   }
 
 #   return dic_resultados_fx
-
-
-################################################################################
-
-# import base64
-# import requests
-
-# credentials = '51f7c56e-8c95-4943-bc7c-b4a986bd4646' + ':'
-
-# encodedBytes = base64.b64encode(credentials.encode("utf-8")) # https://www.base64encoder.io/python/
-# encodedStr = str(encodedBytes, "utf-8")
-# wallet_address = '0xaef25bf5970073b39b3ec5b3d78595f12f767fd8'
-
-
-# res = requests.get(
-#     f"https://api.zapper.fi/v2/prices/0x4277f8F2c384827B5273592FF7CeBd9f2C1ac258?network=arbitrum&timeFrame=year&currency=USD",
-#     headers={'Authorization': f"Basic {encodedStr}"})
-
-# print(res)
-
-# assert res.status_code == 200, "API Problem"
