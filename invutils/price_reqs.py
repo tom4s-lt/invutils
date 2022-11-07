@@ -53,7 +53,7 @@ def coingecko_historical_px_req(id_cg:str =  'bitcoin', days:int = 31):
   return df
 
 
-def defillama_historical_px_req(id_llama = 'ethereum:0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', timestamp = time.mktime(datetime.now().timetuple())):
+def defillama_historical_px_req(id_llama:str = 'ethereum:0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', timestamp = time.mktime(datetime.now().timetuple())):
   """ Get n-days price for tokens listed in defillama
   Args:
     either of these:
@@ -83,6 +83,31 @@ def defillama_historical_px_req(id_llama = 'ethereum:0xC02aaA39b223FE8D0A0e5C4F2
     df = pd.DataFrame()
 
   return df
+
+
+def zapper_current_network_px_req(credentials:str, network:str):
+  """Get current prices for all tokens supported in zapper - for a given network
+  Args:
+    credentials (string): zapper api_key (personal)
+    network (string): desired network for token price search (e.g. ethereum, arbitrum, optimism)
+  
+  Returns:
+    records (json): record-style json containing price, name & ticker (symbol)
+  """
+  
+  credentials = credentials + ":"
+  encodedBytes = base64.b64encode(credentials.encode("utf-8")) # https://www.base64encoder.io/python/
+  encodedStr = str(encodedBytes, "utf-8")
+
+  url = "https://api.zapper.fi/v2/prices"
+  res = rq.get(url, params = {'network': network}, headers = {'Authorization': f"Basic {encodedStr}"})
+  assert res.status_code == 200, "API Response Problem: " + str(res)
+
+  df = pd.DataFrame.from_records(res.json())
+  json = df[['name', 'symbol', 'price']].to_dict(orient = 'records')
+  
+  return json
+
 
 # def zapper_px_req(api_endpoint, api_key, token, token_address, network):
 #   dic_resultados_fx = {}
