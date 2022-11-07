@@ -1,5 +1,7 @@
 # refresh_inver
-Respository for refreshing own crypto portfolio tracker in Google Sheets
+Repo for useful tools for handling investing data:
+- cryptocurrency price search
+- cryptocurrency balance search (for a given account)
 
 For mention
 - John galt
