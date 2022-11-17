@@ -20,8 +20,12 @@ def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
   """
   
   url = "https://api.coingecko.com/api/v3/simple/price"
-  params = {'ids': id_cg, 'vs_currencies': vs_currencies}
-  res = rq.get(url, params = params)
+  
+  res = rq.get(url, params = {
+    'ids': id_cg,
+    'vs_currencies': vs_currencies,
+    }
+  )
   assert res.status_code == 200, "API Response Problem: " + str(res)
     
   df = pd.DataFrame(res.json()).T
@@ -46,7 +50,12 @@ def coingecko_historical_px_req(id_cg:str =  'bitcoin', days:int = 31):
   """
   
   url ='https://api.coingecko.com/api/v3' + f'/coins/{id_cg}/market_chart'
-  res = rq.get(url, params = {'vs_currency': 'usd', 'days': days})
+  
+  res = rq.get(url, params = {
+    'vs_currency': 'usd',
+    'days': days,
+    }
+  )
   assert res.status_code == 200, "API Response Problem: " + str(res)
 
   prices = res.json()['prices']
@@ -54,7 +63,6 @@ def coingecko_historical_px_req(id_cg:str =  'bitcoin', days:int = 31):
   df[0] = pd.to_datetime(df[0], unit = 'ms')
   df.columns = ['date', id_cg]
   df.set_index('date', inplace = True)
-  df = df.resample('D').last()
 
   json = df.reset_index()
   json = json.to_dict(orient = 'records')
@@ -76,6 +84,7 @@ def defillama_historical_px_req(id_llama:str = 'ethereum:0xC02aaA39b223FE8D0A0e5
   """
 
   url = f"https://coins.llama.fi/prices/historical/{timestamp}/{id_llama}"
+  
   res = rq.get(url)
   assert res.status_code == 200, "API Response Problem: " + str(res)
   
@@ -109,7 +118,11 @@ def zapper_current_network_px_req(credentials:str, network:str):
   encodedStr = str(encodedBytes, "utf-8")
 
   url = "https://api.zapper.fi/v2/prices"
-  res = rq.get(url, params = {'network': network}, headers = {'Authorization': f"Basic {encodedStr}"})
+  
+  res = rq.get(url,
+               params = {'network': network},
+               headers = {'Authorization': f"Basic {encodedStr}"}
+              )
   assert res.status_code == 200, "API Response Problem: " + str(res)
 
   df = pd.DataFrame.from_records(res.json())
