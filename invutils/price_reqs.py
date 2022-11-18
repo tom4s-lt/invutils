@@ -32,7 +32,7 @@ def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
   df.index = [pd.to_datetime(datetime.now())]
 
   json = df.reset_index()
-  json.columns = ['date'].append(list(json.columns)[1:])
+  json.columns = [['date'].append(list(json.columns)[1:])]
   json = json.to_dict(orient = 'records')
 
   return df, json
