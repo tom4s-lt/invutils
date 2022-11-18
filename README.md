@@ -15,3 +15,5 @@ To-do
 - better exception handling for functions
 - Balance search
 - Documentation
+
+Returns on price searching functions give a timeseries with assets in columns or json
