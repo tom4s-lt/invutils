@@ -15,7 +15,7 @@ def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
       coingecko ids (string): "id_cg1,id_cg2,...,id_cgN"
   
   Returns:
-    df (dataframe): index = id_cg & one column "price" = current price - index -> [id_cg], columns -> [price], data -> [current price]
+    df (dataframe): timeseries df (one row) containing current px for each asset in columns - index -> [date], columns -> [id_cg], data -> [current price]
     json (json): record-style json containing id_cg & price for each asset (same information as dataframe)
   """
   
@@ -28,8 +28,8 @@ def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
   )
   assert res.status_code == 200, "API Response Problem: " + str(res)
     
-  df = pd.DataFrame(res.json()).T
-  df.columns = ['price']
+  df = pd.DataFrame(res.json())
+  df.index = pd.to_datetime(datetime.now())
 
   json = df.reset_index()
   json.columns = ['id_cg', 'price']
