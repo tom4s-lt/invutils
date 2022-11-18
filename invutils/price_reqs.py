@@ -29,7 +29,7 @@ def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
   assert res.status_code == 200, "API Response Problem: " + str(res)
     
   df = pd.DataFrame(res.json())
-  df.index = pd.to_datetime(datetime.now())
+  df.index = [pd.to_datetime(datetime.now())]
 
   json = df.reset_index()
   json.columns = ['id_cg', 'price']
