@@ -2,76 +2,90 @@
 """
 
 import pandas as pd
-import requests as rq
+import requests
 from datetime import datetime
 import time
+import base64
 
 
-def coingecko_current_px_req(id_cg:str = 'bitcoin', vs_currencies:str = 'usd'):
+
+def coingecko_current_px_req(id_cg:str, vs_currencies:str = 'usd'):
   """ Get current price of coin or coins (passed as csv to url)
+  
   Args:
     either of these:
       coingecko id (string): coingecko id for the desired asset/coin/token
       coingecko ids (string): "id_cg1,id_cg2,...,id_cgN"
   
   Returns:
-    df (dataframe): timeseries df (one row) containing current px for each asset in columns - index -> [date], columns -> [id_cg], data -> [current price]
-    json (json): record-style json containing id_cg & price for each asset (same information as dataframe)
+    df (dataframe): timeseries df (one row) containing current px for each asset in columns - index -> [date (%Y/%m/%d)], columns -> [id_cg], data -> [current price]
   """
-  
+  assert type(id_cg) is str, 'id_cg should be a str'
+  assert type(vs_currencies) is str, 'vs_currencies should be a str'
+
   url = "https://api.coingecko.com/api/v3/simple/price"
   
-  res = rq.get(url, params = {
-    'ids': id_cg,
-    'vs_currencies': vs_currencies,
-    }
-  )
-  assert res.status_code == 200, "API Response Problem: " + str(res)
+  try:
+    res = requests.get(url, params = {
+      'ids': id_cg,
+      'vs_currencies': vs_currencies,
+      }
+    )
+    res.raise_for_status()
+  
+    df = pd.DataFrame(res.json())
+    df.index = [pd.to_datetime(datetime.now().strftime("%Y-%m-%d"))]
+
+    return df
+
+  except requests.exceptions.HTTPError as errh:
+    print("Http Error:", errh)
+
+
     
-  df = pd.DataFrame(res.json())
-  df.index = [pd.to_datetime(datetime.now())]
+def coingecko_historical_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'):
+  """ Get CoinGecko historicacl price data of coin.
+  If bad id_cg is passed - returns HTTP error
 
-  json = df.reset_index()
-  json.columns = ['date'] + list(json.columns)[1:]
-  json = json.to_dict(orient = 'records')
-
-  return df, json
-
-
-def coingecko_historical_px_req(id_cg:str =  'bitcoin', days:int = 31):
-  """ Get 31 past days price of coin
   Args:
     coingecko id (string): coingecko id for the desired asset/coin/token
-    days (int): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data) - UTC time for get request
+    vs_currency (string, optional)
+    days (int | str:'max', optional): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data) - UTC time for get request
   
   Returns:
-    df (dataframe): timeseries df containing last price for each day queued - index-> [date], columns-> [id_cg], data -> [last price for each day]
-    json (json): record-style json containing same information as dataframe
+    df (dataframe): timeseries df containing last price for each day queued - index-> [date (%Y/%m/%d)], columns-> [id_cg], data -> [last price for each day]
   """
+  assert type(id_cg) is str, 'id_cg should be a str'
+  assert type(vs_currency) is str, 'vs_currency should be a str'
   
   url ='https://api.coingecko.com/api/v3' + f'/coins/{id_cg}/market_chart'
   
-  res = rq.get(url, params = {
-    'vs_currency': 'usd',
-    'days': days,
-    }
-  )
-  assert res.status_code == 200, "API Response Problem: " + str(res)
+  try:
+    res = requests.get(url, params = {
+      'vs_currency': vs_currency,
+      'days': days,
+      }
+    )
+    res.raise_for_status()
 
-  prices = res.json()['prices']
-  df = pd.DataFrame(prices)
-  df[0] = pd.to_datetime(df[0], unit = 'ms')
-  df.columns = ['date', id_cg]
-  df.set_index('date', inplace = True)
+    df = pd.DataFrame(res.json()['prices'])
+    df.iloc[:,0] = pd.to_datetime(df[0], unit = 'ms')  # date comes in ms in coingecko response
+    df.columns = ['date', id_cg]
+    df.set_index('date', inplace = True)
+    df = df.resample('D', kind = 'period').last()  # for date format
 
-  json = df.reset_index()
-  json = json.to_dict(orient = 'records')
+    return df
+  
+  except requests.exceptions.HTTPError as errh:
+    print("Http Error:", errh)
 
-  return df, json
 
 
-def defillama_historical_px_req(id_llama:str = 'ethereum:0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', timestamp = time.mktime(datetime.now().timetuple())):
-  """ Get n-days price for tokens listed in defillama
+def defillama_historical_px_req(id_llama:str, timestamp = int(time.mktime(datetime.now().timetuple()))):
+  """ Get n-day price for tokens listed in defillama
+  If no timestamp is passed, current time is used.
+  If bad id_llama is passed - returns empty json
+
   Args:
     either of these:
       defillama id (str): defillama id for the desired token ('chain:address')
@@ -82,29 +96,36 @@ def defillama_historical_px_req(id_llama:str = 'ethereum:0xC02aaA39b223FE8D0A0e5
   Returns:
     df (dataframe): timeseries df containing price for tokens asked for the timestamp asked
   """
+  assert type(id_llama) is str, 'id_llama should be a str'
+  assert type(timestamp) is int, 'timestamp should be an int representing unix timestamp'
 
   url = f"https://coins.llama.fi/prices/historical/{timestamp}/{id_llama}"
-  
-  res = rq.get(url)
-  assert res.status_code == 200, "API Response Problem: " + str(res)
-  
-  prices = res.json()['coins']
-  data = []
-  for asset in prices:
-    data.append(
-        {'ticker': prices[asset]['symbol'].lower(), 'price': prices[asset]['price'], 'timestamp': datetime.fromtimestamp(timestamp)}
-    )
-  
-  if len(data):
-    df = pd.DataFrame(data).pivot(index = 'timestamp' ,columns = 'ticker', values = 'price').resample('D').last()
-  else:
-    df = pd.DataFrame()
 
-  return df
+  try:    
+    res = requests.get(url)
+    
+    df = pd.DataFrame(res.json()['coins']) # res.json()['prices'] can come as empty dic
+
+    try: 
+      df.loc['date'] = pd.to_datetime(timestamp, unit = 's').date()
+      df = df.T.pivot(index = 'date', columns = 'symbol', values = 'price')
+    
+    except ValueError as errh:
+      print('ValueError:', errh)
+      print('Probably because response came as an empty JSON')
+
+    return df
+  
+  except requests.exceptions.HTTPError as errh:
+    print("Http Error:", errh)
 
 
+    
 def zapper_current_network_px_req(credentials:str, network:str):
   """Get current prices for all tokens supported in zapper - for a given network
+  If bad credentials passed - returns HTTP error on bad auth
+  If bad network is passed - returns HTTP error on bad request
+
   Args:
     credentials (string): zapper api_key (personal)
     network (string): desired network for token price search (e.g. ethereum, arbitrum, optimism)
@@ -112,6 +133,8 @@ def zapper_current_network_px_req(credentials:str, network:str):
   Returns:
     records (json): record-style json containing price, name & ticker (symbol)
   """
+  assert type(credentials) is str, 'credentials should be a str'
+  assert type(network) is str, 'network should be a str'
   
   credentials = credentials + ":"
   encodedBytes = base64.b64encode(credentials.encode("utf-8")) # https://www.base64encoder.io/python/
@@ -119,40 +142,19 @@ def zapper_current_network_px_req(credentials:str, network:str):
 
   url = "https://api.zapper.fi/v2/prices"
   
-  res = rq.get(url,
-               params = {'network': network},
-               headers = {'Authorization': f"Basic {encodedStr}"}
-              )
-  assert res.status_code == 200, "API Response Problem: " + str(res)
+  try:
+    res = requests.get(url,
+                params = {'network': network},
+                headers = {'Authorization': f"Basic {encodedStr}"}
+                )
+    res.raise_for_status()
 
-  df = pd.DataFrame.from_records(res.json())
-  df = df[['name', 'symbol', 'price']]
-  json = df.to_dict(orient = 'records')
+    df = pd.DataFrame.from_records(res.json())
+    df = df[['address', 'name', 'symbol', 'coingeckoId', 'price', 'network']]
+    df.loc[:, 'date'] = pd.to_datetime(datetime.now().strftime("%Y/%m/%d"))
+    df.set_index('date', inplace = True)
   
-  return df, json
+    return df
 
-
-# def zapper_px_req(api_endpoint, api_key, token, token_address, network):
-#   dic_resultados_fx = {}
-#   credentials = api_key + ':'
-
-#   encodedBytes = base64.b64encode(credentials.encode("utf-8")) # https://www.base64encoder.io/python/
-#   encodedStr = str(encodedBytes, "utf-8")
-
-#   response_prices = requests.get(
-#       f"{api_endpoint}/prices/{token_address}?network={network}&timeFrame=year&currency=USD",
-#       headers={'Authorization': f"Basic {encodedStr}"}
-#   )
-
-#   assert response_prices.status_code == 200, "API Response Problem"
-  
-#   response_prices.json()['prices']
-  
-#   dic_resultados_fx[token] = {
-#       '0d': response_prices.json()['prices'][-1][1],
-#       '1d': response_prices.json()['prices'][-3][1],
-#       '7d': response_prices.json()['prices'][-9][1],
-#       '30d': response_prices.json()['prices'][-32][1]
-#   }
-
-#   return dic_resultados_fx
+  except requests.exceptions.HTTPError as errh:
+    print("Http Error:", errh)
