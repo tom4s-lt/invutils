@@ -18,7 +18,7 @@ def coingecko_current_px_req(id_cg:str, vs_currencies:str = 'usd'):
       coingecko ids (string): "id_cg1,id_cg2,...,id_cgN"
   
   Returns:
-    df (dataframe): timeseries df (one row) containing current px for each asset in columns - index -> [date (%Y/%m/%d)], columns -> [id_cg], data -> [current price]
+    df (dataframe): timeseries df (one row) containing current px for each asset in columns - index -> [date (%Y-%m-%d)], columns -> [id_cg], values -> [current price]
   """
   assert type(id_cg) is str, 'id_cg should be a str'
   assert type(vs_currencies) is str, 'vs_currencies should be a str'
@@ -53,7 +53,7 @@ def coingecko_historical_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'
     days (int | str:'max', optional): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data) - UTC time for get request
   
   Returns:
-    df (dataframe): timeseries df containing last price for each day queued - index-> [date (%Y/%m/%d)], columns-> [id_cg], data -> [last price for each day]
+    df (dataframe): timeseries df containing last price for each day queued - index-> [date (%Y-%m-%d)], columns-> [id_cg], values -> [last price for each day]
   """
   assert type(id_cg) is str, 'id_cg should be a str'
   assert type(vs_currency) is str, 'vs_currency should be a str'
@@ -94,7 +94,7 @@ def defillama_historical_px_req(id_llama:str, timestamp = int(time.mktime(dateti
     timestamp (float): UNIX timestamp of time when you want historical prices
   
   Returns:
-    df (dataframe): timeseries df containing price for tokens asked for the timestamp asked
+    df (dataframe): timeseries df containing price for timestamp queued - index -> [date(%Y-%m-%d-%h-%m-%s)], columns -> [id_llama], values -> [price]
   """
   assert type(id_llama) is str, 'id_llama should be a str'
   assert type(timestamp) is int, 'timestamp should be an int representing unix timestamp'
@@ -108,8 +108,8 @@ def defillama_historical_px_req(id_llama:str, timestamp = int(time.mktime(dateti
 
     try: 
       df.loc['date'] = pd.to_datetime(timestamp, unit = 's')
-      df = df.T.pivot(index = 'date', columns = 'symbol', values = 'price')
-      df.columns = df.columns.str.lower()
+      df.loc['id_llama'] = df.columns
+      df = df.T.pivot(index = 'date', columns = 'id_llama', values = 'price')
     
     except ValueError as errh:
       print('ValueError:', errh)
