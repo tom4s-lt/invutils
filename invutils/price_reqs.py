@@ -109,6 +109,7 @@ def defillama_historical_px_req(id_llama:str, timestamp = int(time.mktime(dateti
     try: 
       df.loc['date'] = pd.to_datetime(timestamp, unit = 's')
       df = df.T.pivot(index = 'date', columns = 'symbol', values = 'price')
+      df.columns = df.columns.str.lower()
     
     except ValueError as errh:
       print('ValueError:', errh)
