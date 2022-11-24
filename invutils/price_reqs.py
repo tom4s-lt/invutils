@@ -107,8 +107,8 @@ def defillama_historical_px_req(id_llama:str, timestamp = int(time.mktime(dateti
     df = pd.DataFrame(res.json()['coins']) # res.json()['prices'] can come as empty dic
 
     try: 
-      df.loc['date'] = pd.to_datetime(timestamp, unit = 's').date()
-      df = df.T.pivot(index = 'date', columns = 'symbol', values = 'price')
+      df.loc['date'] = pd.to_datetime(timestamp, unit = 's')
+      df = df.T.pivot(index = 'date', columns = 'symbol', values = 'price').resample('D', kind = 'period').last()
     
     except ValueError as errh:
       print('ValueError:', errh)
