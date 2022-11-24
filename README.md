@@ -10,6 +10,6 @@ For mention
 To-do
 - Balance search
 - Documentation
--   asd
+  - asd
 
 Returns on price searching functions give a timeseries with assets in columns or json
