@@ -5,15 +5,11 @@ Repo for useful tools for handling investing data:
 
 For mention
 - John galt
-- Coingecko
-- DefiLlama
-- Zapper
+- ctc for documentation examples
 
 To-do
-- Zapper functions for price search
-- json returns for every function (as well as df)
-- better exception handling for functions
 - Balance search
 - Documentation
+-   asd
 
 Returns on price searching functions give a timeseries with assets in columns or json
