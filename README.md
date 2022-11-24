@@ -10,6 +10,15 @@ For mention
 To-do
 - Balance search
 - Documentation
-  - asd
+  - Taking ctc as example
+  - APIs and endpoints being used - with rate calls and relevant references 
+    - Open/close
+    - Rate calls and limits
+  - Exception handling
+    - HTTP errors
+    - types of arguments
+    - datos faltantes
+    - datos erroneos
+- Mejorar construccion de los DataFrames
 
 Returns on price searching functions give a timeseries with assets in columns or json
