@@ -72,7 +72,7 @@ def coingecko_historical_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'
     df.iloc[:,0] = pd.to_datetime(df[0], unit = 'ms')  # date comes in ms in coingecko response
     df.columns = ['date', id_cg]
     df.set_index('date', inplace = True)
-    df = df.resample('D', kind = 'period').last()  # for date format
+    df = df.resample('D').last()  # for date format - they can come at different hours
 
     return df
   
@@ -108,7 +108,7 @@ def defillama_historical_px_req(id_llama:str, timestamp = int(time.mktime(dateti
 
     try: 
       df.loc['date'] = pd.to_datetime(timestamp, unit = 's')
-      df = df.T.pivot(index = 'date', columns = 'symbol', values = 'price').resample('D', kind = 'period').last()
+      df = df.T.pivot(index = 'date', columns = 'symbol', values = 'price')
     
     except ValueError as errh:
       print('ValueError:', errh)
