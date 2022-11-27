@@ -22,3 +22,5 @@ To-do
 - Mejorar construccion de los DataFrames
 
 Returns on price searching functions give a timeseries with assets in columns or json
+
+- For docu - https://docs.transpose.io/reference/token-model
