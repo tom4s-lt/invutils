@@ -9,7 +9,7 @@ import base64
 
 
 def cgc_current_px_req(id_cg:str, vs_currencies:str = 'usd'):
-  """ Get current price of coin or coins (passed as csv to url)
+  """CoinGecko - Get current price of coin or coins (passed as csv to url)
   
   Args:
     either of these:
@@ -41,8 +41,8 @@ def cgc_current_px_req(id_cg:str, vs_currencies:str = 'usd'):
     print("Http Error:", errh)
 
 
-def cgc_historical_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'):
-  """ Get CoinGecko historicacl price data of coin.
+def cgc_hist_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'):
+  """CoinGecko - Get CoinGecko historicacl price data of coin.
   If bad id_cg is passed - returns HTTP error
 
   Args:
@@ -78,8 +78,8 @@ def cgc_historical_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'):
     print("Http Error:", errh)
 
 
-def dll_historical_px_req(id_llama:str, timestamp = int(time.mktime(datetime.now().timetuple()))):
-  """ Get n-day price for tokens listed in defillama
+def dll_hist_px_req(id_llama:str, timestamp = int(time.mktime(datetime.now().timetuple()))):
+  """DefiLlama - Get n-day price for tokens listed in defillama
   If no timestamp is passed, current time is used.
   If bad id_llama is passed - returns empty json
 
@@ -119,7 +119,7 @@ def dll_historical_px_req(id_llama:str, timestamp = int(time.mktime(datetime.now
 
 
 def zpr_current_network_px_req(credentials:str, network:str):
-  """Get current prices for all tokens supported in zapper - for a given network
+  """Zapper - Get current prices for all tokens supported in zapper - for a given network
   If bad credentials passed - returns HTTP error on bad auth
   If bad network is passed - returns HTTP error on bad request
 
@@ -158,7 +158,7 @@ def zpr_current_network_px_req(credentials:str, network:str):
 
 
 def cmc_current_px_req(credentials:str, cmc_slug:str):
-  """ Get current price of coin or coins (passed as csv to url)
+  """CoinMarketCap - Get current price of coin or coins (passed as csv to url)
   
   Args:
     either of these:
