@@ -12,7 +12,7 @@ setup(name = "invutils",
 	      "requests",
 	      "pandas",
 	      "datetime",
-	      "time"
+	      "time",
 	      "base64",
       	],
       classifiers = [
