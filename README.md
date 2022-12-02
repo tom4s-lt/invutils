@@ -1,26 +1,29 @@
-# refresh_inver
-Repo for useful tools for handling investing data:
-- cryptocurrency price search
-- cryptocurrency balance search (for a given account)
+# invutils
+`invutils` is a python package with useful tools for handling investing data. It features:
+- Cryptocurrency price search
+- Planned features on TODO
+	- Future - cryptocurrency balance search (for a given account)
+	- Yahoo finance price search
+
+## Contents
+1. Instalation
+2. Example Usage
+	1. Coingecko API
+	2. DefiLlama API
+	3. Zapper API
+3. API Dependencies
+
+```python
+pd.range()
+```
+
+
+For each API
+- Opennes
+- Call rates
+- Limits
 
 For mention
 - John galt
 - ctc for documentation examples
-
-To-do
-- Balance search
-- Documentation
-  - Taking ctc as example
-  - APIs and endpoints being used - with rate calls and relevant references 
-    - Open/close
-    - Rate calls and limits
-  - Exception handling
-    - HTTP errors
-    - types of arguments
-    - datos faltantes
-    - datos erroneos
-- Mejorar construccion de los DataFrames
-
-Returns on price searching functions give a timeseries with assets in columns or json
-
 - For docu - https://docs.transpose.io/reference/token-model
