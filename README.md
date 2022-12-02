@@ -58,6 +58,15 @@ from invutils import moduleName
 - RPM Limit: Unknown
 - Monthly limit: 10.000 points
 
+### [CoinMarketCap](https://coinmarketcap.com/)
+- [API Documentation](https://coinmarketcap.com/api/)
+- Free Tier available
+	- Current prices
+- Key needed
+- RPM Limit: 30 calls/min
+- Daily Limit: 333 credits/day
+- Monthly Limit: 10.000 credits/month
+
 <br>
 
 ## Example Usage
