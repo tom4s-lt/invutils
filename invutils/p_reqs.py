@@ -1,12 +1,11 @@
 """Function definitions for price requests to various APIs
 """
 
-import pandas as pd
 import requests
+import pandas as pd
 from datetime import datetime
 import time
 import base64
-
 
 
 def coingecko_current_px_req(id_cg:str, vs_currencies:str = 'usd'):
@@ -42,7 +41,6 @@ def coingecko_current_px_req(id_cg:str, vs_currencies:str = 'usd'):
     print("Http Error:", errh)
 
 
-    
 def coingecko_historical_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'):
   """ Get CoinGecko historicacl price data of coin.
   If bad id_cg is passed - returns HTTP error
@@ -78,7 +76,6 @@ def coingecko_historical_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'
   
   except requests.exceptions.HTTPError as errh:
     print("Http Error:", errh)
-
 
 
 def defillama_historical_px_req(id_llama:str, timestamp = int(time.mktime(datetime.now().timetuple()))):
@@ -121,7 +118,6 @@ def defillama_historical_px_req(id_llama:str, timestamp = int(time.mktime(dateti
     print("Http Error:", errh)
 
 
-    
 def zapper_current_network_px_req(credentials:str, network:str):
   """Get current prices for all tokens supported in zapper - for a given network
   If bad credentials passed - returns HTTP error on bad auth
