@@ -8,7 +8,7 @@ import time
 import base64
 
 
-def coingecko_current_px_req(id_cg:str, vs_currencies:str = 'usd'):
+def cgc_current_px_req(id_cg:str, vs_currencies:str = 'usd'):
   """ Get current price of coin or coins (passed as csv to url)
   
   Args:
@@ -41,7 +41,7 @@ def coingecko_current_px_req(id_cg:str, vs_currencies:str = 'usd'):
     print("Http Error:", errh)
 
 
-def coingecko_historical_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'):
+def cgc_historical_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'):
   """ Get CoinGecko historicacl price data of coin.
   If bad id_cg is passed - returns HTTP error
 
@@ -78,7 +78,7 @@ def coingecko_historical_px_req(id_cg:str, vs_currency:str = 'usd', days = 'max'
     print("Http Error:", errh)
 
 
-def defillama_historical_px_req(id_llama:str, timestamp = int(time.mktime(datetime.now().timetuple()))):
+def dll_historical_px_req(id_llama:str, timestamp = int(time.mktime(datetime.now().timetuple()))):
   """ Get n-day price for tokens listed in defillama
   If no timestamp is passed, current time is used.
   If bad id_llama is passed - returns empty json
@@ -118,7 +118,7 @@ def defillama_historical_px_req(id_llama:str, timestamp = int(time.mktime(dateti
     print("Http Error:", errh)
 
 
-def zapper_current_network_px_req(credentials:str, network:str):
+def zpr_current_network_px_req(credentials:str, network:str):
   """Get current prices for all tokens supported in zapper - for a given network
   If bad credentials passed - returns HTTP error on bad auth
   If bad network is passed - returns HTTP error on bad request
@@ -155,3 +155,44 @@ def zapper_current_network_px_req(credentials:str, network:str):
 
   except requests.exceptions.HTTPError as errh:
     print("Http Error:", errh)
+
+
+def cmc_current_px_req(credentials:str, cmc_slug:str):
+  """ Get current price of coin or coins (passed as csv to url)
+  
+  Args:
+    either of these:
+      cmc slug (string): cmc_slug for the desired asset/coin/token
+      cmc slugs (string): "cmc_slug1,cmc_slug2,...,cmc_slugN"
+  
+  Returns:
+    df (dataframe): timeseries df (one row) containing current px for each asset in columns - index -> [date (%Y-%m-%d)], columns -> [cmc_slug], values -> [current price]
+  """
+  assert type(credentials) is str, 'credentials should be a str'
+  assert type(cmc_slug) is str, 'network should be a str'
+
+  # Pass slugs here because in params, requests converts them to 'bitcoin%2Cethereum' and cmc api takes 'bitcoin,ethereum'
+  url = f"https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?slug={cmc_slug}"
+
+  try:
+    s = requests.Session()
+    s.headers.update({'X-CMC_PRO_API_KEY': credentials})
+
+    res = requests.get(url,
+                headers = {'X-CMC_PRO_API_KEY': credentials, 'Accept': 'application/json'}
+                )
+    res.raise_for_status()
+
+    df = pd.DataFrame.from_dict(res.json()['data'], orient = 'columns')
+    data = []
+    for label, row in df.items():
+      data.append([row.loc['slug'], row.loc['quote']['USD']['price']])
+
+    df = pd.DataFrame(data)
+    df = df.set_index(0).T
+    df.index = [pd.to_datetime(datetime.now().strftime("%Y-%m-%d"))]
+  
+  except requests.exceptions.HTTPError as errh:
+    print("Http Error:", errh)
+  
+  return df
