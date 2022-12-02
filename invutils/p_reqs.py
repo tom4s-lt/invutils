@@ -157,8 +157,9 @@ def zapper_network_px_req(credentials:str, network:str):
     print("Http Error:", errh)
 
 
-def cmc_px_req(credentials:str, cmc_slug:str):
-  """CoinMarketCap - Get current price of coin or coins (passed as csv to url)
+def cmc_current_px_req(credentials:str, cmc_slug:str):
+  """ Get current price of coin or coins (passed as csv to url)
+  cmc_slug can't end in ","
   
   Args:
     either of these:
@@ -175,9 +176,6 @@ def cmc_px_req(credentials:str, cmc_slug:str):
   url = f"https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?slug={cmc_slug}"
 
   try:
-    s = requests.Session()
-    s.headers.update({'X-CMC_PRO_API_KEY': credentials})
-
     res = requests.get(url,
                 headers = {'X-CMC_PRO_API_KEY': credentials, 'Accept': 'application/json'}
                 )
