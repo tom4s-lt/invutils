@@ -40,6 +40,8 @@ from invutils import moduleName
 ### [CoinGecko](https://www.coingecko.com/)
 - [API Documentation](https://www.coingecko.com/en/api/documentation)
 - Free Tier available
+	- Current prices
+	- Historical prices
 - No key needed
 - RPM limit: 10-50 calls/min
 - Monthly limit: Unknown
@@ -47,6 +49,8 @@ from invutils import moduleName
 ### [DefiLlama](https://defillama.com/)
 - [API Documentation](https://defillama.com/docs/api)
 - Free
+	- Current prices
+	- Historical Prices
 - No key needed
 - RPM limit: not stated
 - Monthly limit: Unknown
@@ -54,9 +58,10 @@ from invutils import moduleName
 ### [Zapper](https://zapper.fi/)
 - [API Documentation](https://studio.zapper.fi/docs/apis/getting-started)
 - Free Tier available
+	- Current prices
 - Key needed
 - RPM Limit: Unknown
-- Monthly limit: 10.000 points
+- Monthly limit: 10.000 credits/month
 
 ### [CoinMarketCap](https://coinmarketcap.com/)
 - [API Documentation](https://coinmarketcap.com/api/)
