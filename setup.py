@@ -8,11 +8,10 @@ setup(name = "invutils",
       author = "Tom4s",
       author_email = "tom4s.rr@gmail.com",
       packages = find_packages(),
-      install_requires = [  # For some reason it fails with "time" inside, so it is removed as it is a built-in module
+      install_requires = [  # Fails with ["time", "base64"] - They are removed as they are built-in modules
 	      "requests",
 	      "pandas",
 	      "datetime",
-	      "base64",
       	],
       classifiers = [
 	      "Programming Language :: Python",
