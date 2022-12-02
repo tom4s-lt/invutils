@@ -1,7 +1,7 @@
 # invutils
 `invutils` is a python package with useful tools for handling investing data. It features:
 - Cryptocurrency price search
-- Planned features on TODO
+- Planned features on TODO.md
 	- Future - cryptocurrency balance search (for a given account)
 	- Yahoo finance price search
 
