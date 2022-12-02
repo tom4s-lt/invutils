@@ -29,6 +29,10 @@ Future plans include:
 pip install git+https://github.com/xtom4s/inverutilities.git
 ```
 
+```python
+from invutils import moduleName
+```
+
 <br>
 
 ## API Dependencies
