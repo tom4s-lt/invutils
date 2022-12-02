@@ -1,4 +1,5 @@
 # invutils
+
 `invutils` is a python package with useful tools for handling investing data. It features:
 - Cryptocurrency price search
 
@@ -8,20 +9,27 @@ Future plans include:
 - Cryptocurrency balance/holdings search (for a given account)
 - Yahoo finance price search for stocks
 
+<br>
+
 ## Contents
+
 1. [Instalation](#installation)
 2. [API Dependencies](#api-dependencies)
 	1. [Coingecko](#coingecko)
 	2. [DefiLlama](#defillama)
 	3. [Zapper](#zapper)
-3. Example Usage
+3. [Example Usage](#example-usage)
 4. [Inspiration & References](#inspiration-&-references)
+
+<br>
 
 ## Installation
 
 ```sh
 pip install git+https://github.com/xtom4s/inverutilities.git
 ```
+
+<br>
 
 ## API Dependencies
 
@@ -46,6 +54,13 @@ pip install git+https://github.com/xtom4s/inverutilities.git
 - RPM Limit: Unknown
 - Monthly limit: 10.000 points
 
+<br>
+
+## Example Usage
+
+<br>
+
 ## Inspiration & References
+
 [defi](https://github.com/gauss314/defi) - DeFi open source tools from [gauss314](https://github.com/gauss314)
 [ctc](https://github.com/fei-protocol/checkthechain) - tool for collecting and analyzing data from Ethereum & EVM chains
