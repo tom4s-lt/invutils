@@ -12,7 +12,7 @@
 	2. [DefiLlama](#defillama)
 	3. [Zapper](#zapper)
 3. Example Usage
-4. Similar projects / Inspiration
+4. [Inspiration & References](#inspiration-&-references)
 
 ## Installation
 
@@ -43,7 +43,7 @@ pip install git+https://github.com/xtom4s/inverutilities.git
 - RPM Limit: Unknown
 - Monthly limit: 10.000 points
 
-For mention
+## Inspiration & References
 - John galt
 - ctc for documentation examples
 - For docu - https://docs.transpose.io/reference/token-model
