@@ -12,7 +12,7 @@
 	2. [DefiLlama](#defillama)
 	3. [Zapper](#zapper)
 3. Example Usage
-4. [Inspiration & References](#inspiration-&-references)
+4. [Inspiration & References](#inspiration--references)
 
 ## Installation
 
