@@ -1,1 +1,1 @@
-from .price_reqs import *
+from .p_reqs import *
