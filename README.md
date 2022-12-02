@@ -30,7 +30,7 @@ pip install git+https://github.com/xtom4s/inverutilities.git
 ```
 
 ```python
-from invutils import moduleName
+from invutils import px_reqs
 ```
 
 <br>
