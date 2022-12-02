@@ -1,5 +1,4 @@
 Prices
-- Add CoinMarketCap
 - Add Coinmetrics
 
 Balances
