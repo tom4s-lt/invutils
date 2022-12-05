@@ -190,7 +190,9 @@ def cmc_current_px_req(credentials:str, cmc_slug:str):
     df = df.set_index(0).T
     df.index = [pd.to_datetime(datetime.now().strftime("%Y-%m-%d"))]
   
+    return df
+  
   except requests.exceptions.HTTPError as errh:
     print("Http Error:", errh)
   
-  return df
+
