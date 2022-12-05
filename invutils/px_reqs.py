@@ -106,7 +106,7 @@ def llama_hist_px_req(id_llama:str, timestamp = int(time.mktime(datetime.now().t
     try: 
       df.loc['date'] = pd.to_datetime(timestamp, unit = 's')
       df.loc['id_llama'] = df.columns
-      df = df.T.pivot(index = 'date', columns = 'id_llama', values = 'price')
+      df = df.T.pivot(index = 'date', columns = 'id_llama', values = 'price').resample('D').last()
     
     except ValueError as errh:
       print('ValueError:', errh)
