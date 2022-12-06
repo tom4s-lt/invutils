@@ -13,15 +13,16 @@ Future plans include:
 
 ## Contents
 
-1. [Instalation](#installation)
+1. [Installation](#installation)
 2. [API Dependencies](#api-dependencies)
 	1. [Coingecko](#coingecko)
 	2. [DefiLlama](#defillama)
 	3. [Zapper](#zapper)
 	4. [CoinMarketCap](#coinmarketcap)
-3. ["Schema"](#schema)
-3. [Example Usage](#example-usage)
-4. [Inspiration & References](#inspiration-&-references)
+3. [Models](#models)
+	1. [px_reqs](#px_reqs)
+4. [Example Usage](#example-usage)
+5. [Inspiration & References](#inspiration--references)
 
 <br>
 
@@ -89,6 +90,8 @@ Tokens defined by:
 	- native assets: 'network:0x0000000000000000000000000000000000000000' (they have no contract address)
 	- e.g. dai: 'ethereum:0x6b175474e89094c44da98b954eedeac495271d0f'
 - _id_zapper_ (string) - There is no definition. Suggested: use 'network:address' as in defillama with zapper's network names (for uniqueness)
+
+Mapping from token ID attributes to ticker is encouraged to be done by the user, and isn't included.
 
 <br>
 
@@ -190,4 +193,4 @@ print(df)
 
 - [defi](https://github.com/gauss314/defi) - DeFi open source tools from [gauss314](https://github.com/gauss314)
 - [ctc](https://github.com/fei-protocol/checkthechain) - tool for collecting and analyzing data from Ethereum & EVM chains
-- [transpose](https://github.com/TransposeData/transpose-python-sdk) python sdk - A modern python wrapper for the Transpose API Suite
+- [transpose](https://github.com/TransposeData/transpose-python-sdk) python SDK - A modern python wrapper for the Transpose API Suite
