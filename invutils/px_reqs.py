@@ -8,7 +8,7 @@ import time
 import base64
 
 
-def gecko_px_req(id_gecko:str, vs_currencies:str = 'usd'):
+def gecko_current(id_gecko:str, vs_currencies:str = 'usd'):
   """CoinGecko - Get current price of coin or coins (coins passed as csv to url)
   
   Args:
@@ -42,7 +42,7 @@ def gecko_px_req(id_gecko:str, vs_currencies:str = 'usd'):
     print("Http Error:", errh)
 
 
-def gecko_hist_px_req(id_gecko:str, vs_currency:str = 'usd', days = 'max'):
+def gecko_hist(id_gecko:str, vs_currency:str = 'usd', days = 'max'):
   """CoinGecko - Get CoinGecko historicacl price data of coin.
   If bad id_gecko is passed - returns HTTP error
 
@@ -79,7 +79,7 @@ def gecko_hist_px_req(id_gecko:str, vs_currency:str = 'usd', days = 'max'):
     print("Http Error:", errh)
 
 
-def llama_hist_px_req(id_llama:str, timestamp = int(time.mktime(datetime.now().timetuple()))):
+def llama_hist(id_llama:str, timestamp = int(time.mktime(datetime.now().timetuple()))):
   """DefiLlama - Get n-day price for tokens listed in defillama
   If no timestamp is passed, current time is used.
   If bad id_llama is passed - returns empty json
@@ -119,7 +119,7 @@ def llama_hist_px_req(id_llama:str, timestamp = int(time.mktime(datetime.now().t
     print("Http Error:", errh)
 
 
-def zapper_current_network_px_req(credentials:str, network:str):
+def zapper_current_network(credentials:str, network:str):
   """Zapper - Get current prices for all tokens supported in zapper - for a given network
   If bad credentials passed - returns HTTP error on bad auth
   If bad network is passed - returns HTTP error on bad request
@@ -158,7 +158,7 @@ def zapper_current_network_px_req(credentials:str, network:str):
     print("Http Error:", errh)
 
 
-def cmc_current_px_req(credentials:str, id_cmc:str):
+def cmc_current(credentials:str, id_cmc:str):
   """Get current price of coin or coins (passed as csv to url)
   id_cmc can't end in ","
 
