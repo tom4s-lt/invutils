@@ -18,6 +18,8 @@ Future plans include:
 	1. [Coingecko](#coingecko)
 	2. [DefiLlama](#defillama)
 	3. [Zapper](#zapper)
+	4. [CoinMarketCap](#coinmarketcap)
+3. ["Schema"](#schema)
 3. [Example Usage](#example-usage)
 4. [Inspiration & References](#inspiration-&-references)
 
@@ -30,7 +32,7 @@ pip install git+https://github.com/xtom4s/inverutilities.git
 ```
 
 ```python
-from invutils import px_reqs
+import invutils.px_reqs as prq
 ```
 
 <br>
@@ -74,14 +76,30 @@ from invutils import px_reqs
 
 <br>
 
+## Models
+Description of the model used to define each user-generated object needed to interact with invutils.
+
+<br>
+
+### px_reqs
+Tokens defined by:
+- _id_gecko_ (string) - CoinGecko id of the token (e.g. 'bitcoin', 'ethereum', 'usd-coin', 'dai')
+- _id_cmc_ (string) - CoinMarketCap slug of the token (e.g. 'bitcoin', 'ethereum', 'usd-coin', 'multi-collateral-dai')
+- _id_llama_ (string) - DefiLlama id of the token (consists of 'chain:address')
+	- native assets: 'network:0x0000000000000000000000000000000000000000' (they have no contract address)
+	- e.g. dai: 'ethereum:0x6b175474e89094c44da98b954eedeac495271d0f'
+- _id_zapper_ (string) - There is no definition. Suggested: use 'network:address' as in defillama with zapper's network names (for uniqueness)
+
+<br>
+
 ## Example Usage
 
 <br>
 
 ```python
-import invutils.px_reqs as pr
+import invutils.px_reqs as prq
 
-df  = pr.gecko_px_req('bitcoin,ethereum,gmx,wrong_id,dai,usd-coin,cap')
+df  = prq.gecko_current('bitcoin,ethereum,gmx,wrong_id,dai,usd-coin,cap')
 print(df)
 ```
 ```text
@@ -92,9 +110,9 @@ print(df)
 <br>
 
 ```python
-import invutils.px_reqs as pr
+import invutils.px_reqs as prq
 
-df  = pr.gecko_hist_px_req('ethereum')
+df  = prq.gecko_hist('ethereum')
 print(df)
 ```
 ```text
@@ -118,9 +136,9 @@ date
 <br>
 
 ```python
-import invutils.px_reqs as pr
+import invutils.px_reqs as prq
 
-df  = pr.llama_hist_px_req('ethereum:0x0000000000000000000000000000000000000000,bsc:0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82')
+df  = prq.llama_hist('ethereum:0x0000000000000000000000000000000000000000,bsc:0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82')
 print(df)
 ```
 ```text
@@ -132,9 +150,9 @@ date
 <br>
 
 ```python
-import invutils.px_reqs as pr
+import invutils.px_reqs as prq
 
-df  = pr.zapper_network_px_req(credentials = 'zapper-api-key', network = 'ethereum')
+df  = prq.zapper_current_network(credentials = 'zapper-api-key', network = 'ethereum')
 print(df)
 ```
 ```text
@@ -156,9 +174,9 @@ date
 <br>
 
 ```python
-import invutils.px_reqs as pr
+import invutils.px_reqs as prq
 
-df = pr.cmc_current_px_req(credentials = 'cmc_api_key', cmc_slug = 'bitcoin,ethereum,bnb,multi-collateral-dai')
+df = prq.cmc_current(credentials = 'cmc_api_key', cmc_slug = 'bitcoin,ethereum,bnb,multi-collateral-dai')
 print(df)
 ```
 ```text
@@ -172,3 +190,4 @@ print(df)
 
 - [defi](https://github.com/gauss314/defi) - DeFi open source tools from [gauss314](https://github.com/gauss314)
 - [ctc](https://github.com/fei-protocol/checkthechain) - tool for collecting and analyzing data from Ethereum & EVM chains
+- [transpose](https://github.com/TransposeData/transpose-python-sdk) python sdk - A modern python wrapper for the Transpose API Suite
