@@ -17,7 +17,6 @@ NETWORKS = {
   
 }
 
-
 # ------------------------------------------------------------------------------
 # Explorer Endpoints
 # ------------------------------------------------------------------------------
@@ -34,6 +33,14 @@ EXPLORER_ENDPOINTS = {
   
 }
 
+EXPLORER_PARAMS = {
+  
+  # f'?module=stats&action=tokensupply&contractaddress {contract_address} &apikey {api_key}'
+  'ERC_20_TOKEN_SUPPLY':    '?module=stats&action=tokensupply&contractaddress=%s&apikey=%s',
+  # f'?module=account&action=tokenbalance&contractaddress= {contract_address} &address= {address} &tag=latest&apikey= {api_key}'
+  'ERC_20_TOKEN_BALANCE':   '?module=account&action=tokenbalance&contractaddress=%s&address=%s&tag=latest&apikey=%s',
+  
+}
 
 # ------------------------------------------------------------------------------
 # API Endpoints
