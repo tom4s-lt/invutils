@@ -2,16 +2,20 @@
 # Networks & Explorers
 # ------------------------------------------------------------------------------
 
-ETHEREUM =        {'name': 'ethereum', 'explorer': 'etherscan'}
-POLYGON =         {'name': 'polygon', 'explorer': 'polygonscan'}
-ARBITRUM =        {'name': 'arbitrum', 'explorer': 'arbiscan'}
-BINANCE =         {'name': 'bnb', 'explorer': 'bscscan'}
-AVALANCHE =       {'name': 'avalanche', 'explorer': 'snowtrace'}
-FANTOM =          {'name': 'fantom', 'explorer': 'ftmscan'}
-OPTIMISM =        {'name': 'optimism', 'explorer': 'optimistic.etherscan'}
-ROPSTEN =         {'name': 'ropsten'}
-KOVAN =           {'name': 'kovan'}
-GOERLI =          {'name': 'goerli'}
+NETWORKS = {
+  
+  'ETHEREUM':               {'name': 'ethereum', 'explorer': 'etherscan'},
+  'POLYGON':                {'name': 'polygon', 'explorer': 'polygonscan'},
+  'ARBITRUM':               {'name': 'arbitrum', 'explorer': 'arbiscan'},
+  'BINANCE':                {'name': 'bnb', 'explorer': 'bscscan'},
+  'AVALANCHE':              {'name': 'avalanche', 'explorer': 'snowtrace'},
+  'FANTOM':                 {'name': 'fantom', 'explorer': 'ftmscan'},
+  'OPTIMISM':               {'name': 'optimism', 'explorer': 'optimistic.etherscan'},
+  'ROPSTEN':                {'name': 'ropsten'},
+  'KOVAN':                  {'name': 'kovan'},
+  'GOERLI':                 {'name': 'goerli'},
+  
+}
 
 
 # ------------------------------------------------------------------------------
