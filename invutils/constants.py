@@ -1,19 +1,36 @@
 # ------------------------------------------------------------------------------
+# Blockchains
+# ------------------------------------------------------------------------------
+
+ETHEREUM = 'ethereum',
+POLYGON = 'polygon',
+ARBITRUM = 'arbitrum',
+BINANCE = 'bnb'
+AVALANCHE = 'avalanche'
+FANTOM = 'fantom'
+OPTIMISM = 'optimism'
+XDAI = 'xdai'
+ROPSTEN = 'ropsten'
+KOVAN = 'kovan'
+GOERLI = 'goerli'
+
+# ------------------------------------------------------------------------------
 # Networks & Explorers
 # ------------------------------------------------------------------------------
 
-NETWORKS = {
+NETWORK_PERKS = {
   
-  'ETHEREUM':               {'name': 'ethereum', 'explorer': 'etherscan'},
-  'POLYGON':                {'name': 'polygon', 'explorer': 'polygonscan'},
-  'ARBITRUM':               {'name': 'arbitrum', 'explorer': 'arbiscan'},
-  'BINANCE':                {'name': 'bnb', 'explorer': 'bscscan'},
-  'AVALANCHE':              {'name': 'avalanche', 'explorer': 'snowtrace'},
-  'FANTOM':                 {'name': 'fantom', 'explorer': 'ftmscan'},
-  'OPTIMISM':               {'name': 'optimism', 'explorer': 'optimistic.etherscan'},
-  'ROPSTEN':                {'name': 'ropsten'},
-  'KOVAN':                  {'name': 'kovan'},
-  'GOERLI':                 {'name': 'goerli'},
+  ETHEREUM:               {'explorer': 'etherscan'},
+  POLYGON:                {'explorer': 'polygonscan'},
+  ARBITRUM:               {'explorer': 'arbiscan'},
+  BINANCE:                {'explorer': 'bscscan'},
+  AVALANCHE:              {'explorer': 'snowtrace'},
+  FANTOM:                 {'explorer': 'ftmscan'},
+  OPTIMISM:               {'explorer': 'optimistic.etherscan'},
+  XDAI:                   {},
+  ROPSTEN:                {},
+  KOVAN:                  {},
+  GOERLI:                 {},
   
 }
 
@@ -30,6 +47,7 @@ EXPLORER_ENDPOINTS = {
   'snowtrace':              'https://api.snowtrace.io/api',
   'arbiscan':               'https://api.arbiscan.io/api',
   'optimistic.etherscan':   'https://api-optimistic.etherscan.io/api',
+  'gnosisscan':             'https://api.gnosisscan.io/api',
   
 }
 
