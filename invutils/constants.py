@@ -1,0 +1,66 @@
+# ------------------------------------------------------------------------------
+# Networks & Explorers
+# ------------------------------------------------------------------------------
+
+ETHEREUM =        {'name': 'ethereum', 'explorer': 'etherscan'}
+POLYGON =         {'name': 'polygon', 'explorer': 'polygonscan'}
+ARBITRUM =        {'name': 'arbitrum', 'explorer': 'arbiscan'}
+BINANCE =         {'name': 'bnb', 'explorer': 'bscscan'}
+AVALANCHE =       {'name': 'avalanche', 'explorer': 'snowtrace'}
+FANTOM =          {'name': 'fantom', 'explorer': 'ftmscan'}
+OPTIMISM =        {'name': 'optimism', 'explorer': 'optimistic.etherscan'}
+ROPSTEN =         {'name': 'ropsten'}
+KOVAN =           {'name': 'kovan'}
+GOERLI =          {'name': 'goerli'}
+
+
+# ------------------------------------------------------------------------------
+# Explorer Endpoints
+# ------------------------------------------------------------------------------
+
+EXPLORER_ENDPOINTS = {
+  
+  'etherscan':              'https://api.etherscan.io/api',
+  'polygonscan':            'https://api.polygonscan.com/api',
+  'bscscan':                'https://api.bscscan.com/api',
+  'ftmscan':                'https://api.ftmscan.com/api',
+  'snowtrace':              'https://api.snowtrace.io/api',
+  'arbiscan':               'https://api.arbiscan.io/api',
+  'optimistic.etherscan':   'https://api-optimistic.etherscan.io/api',
+  
+}
+
+
+# ------------------------------------------------------------------------------
+# API Endpoints
+# ------------------------------------------------------------------------------
+
+COINGECKO_ENDPOINTS = {
+  
+  'base':                   'https://api.coingecko.com/api/v3',
+  'px_current':             'https://api.coingecko.com/api/v3/simple/price',
+  'px_hist':                'https://api.coingecko.com/api/v3/coins/%s/market_chart',  # f'https://api.coingecko.com/api/v3/coins/{id_gecko}/market_chart'
+
+}
+
+DEFILLAMA_ENDPOINTS = {
+    
+  'px_base':                'https://coins.llama.fi',
+  'px_current':             'https://coins.llama.fi/prices/current/%s',  # f'https://coins.llama.fi/prices/current/{id_llama}'
+  'px_hist':                'https://coins.llama.fi/prices/historical/%s/%s',  # f'https://coins.llama.fi/prices/historical/{timestamp}/{id_llama}'
+  
+}
+
+ZAPPER_ENDPOINTS = {
+  
+  'base':                   'https://api.zapper.fi/v2',
+  'px_current':             'https://api.zapper.fi/v2/price',
+
+}
+
+COINMARKETCAP_ENDPOINTS = {
+  
+  'base':                   'https://pro-api.coinmarketcap.com/v1',
+  'px_current':             'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
+
+}
