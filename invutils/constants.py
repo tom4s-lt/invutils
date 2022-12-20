@@ -18,7 +18,7 @@ GOERLI = 'goerli'
 # Networks & Explorers
 # ------------------------------------------------------------------------------
 
-NETWORK_PERKS = {
+NETWORK_INFO = {
   
   ETHEREUM:               {'explorer': 'etherscan'},
   POLYGON:                {'explorer': 'polygonscan'},
