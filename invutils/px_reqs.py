@@ -265,7 +265,7 @@ def exp_univ2_current(credentials:str, network:str, pool:str, subj1:str, subj2:s
     
     subj_dec = {subj1: subj1_dec, subj2: subj2_dec}
     
-    subj_prices = prq.llama_hist(f"{network}:{subj1},{network}:{subj2}")
+    subj_prices = llama_hist(f"{network}:{subj1},{network}:{subj2}")
     
     for subj in subj_dec:
 
