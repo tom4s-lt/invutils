@@ -1,4 +1,4 @@
-from .constants import *
+from ..constants import *
 
 def check_chain(chain):
   
