@@ -8,6 +8,10 @@ import time
 import base64
 
 
+# ------------------------------------------------------------------------------
+# CoinGecko
+# ------------------------------------------------------------------------------
+
 def gecko_current(id_gecko:str, vs_currencies:str = 'usd'):
   """CoinGecko - Get current price of coin or coins (coins passed as csv to url)
   
@@ -18,7 +22,8 @@ def gecko_current(id_gecko:str, vs_currencies:str = 'usd'):
     vs_currencies (str, optional)
         
   Returns:
-    df (DataFrame): timeseries df (one row) containing current px for each asset in columns - index -> [date (%Y-%m-%d)], columns -> [id_gecko], values -> [current price]
+    df (DataFrame): timeseries df (one row) containing current px for each asset in columns \ 
+      index -> [date (%Y-%m-%d)], columns -> [id_gecko], values -> [current price]
   """
   assert type(id_gecko) is str, 'id_gecko should be a str'
   assert type(vs_currencies) is str, 'vs_currencies should be a str'
@@ -49,15 +54,17 @@ def gecko_hist(id_gecko:str, vs_currency:str = 'usd', days = 'max'):
   Args:
     id_gecko (str): coingecko id for the desired asset/coin/token
     vs_currency (str, optional)
-    days (int | str:'max', optional): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data) - UTC time for get request
+    days (int | str:'max', optional): number of days for backwards price search \
+      (1-90 days: hourly data, above 90 days: daily data) - UTC time for get request
   
   Returns:
-    df (DataFrame): timeseries df containing last price for each day queued - index-> [date (%Y-%m-%d)], columns-> [id_gecko], values -> [last price for each day]
+    df (DataFrame): timeseries df containing last price for each day queued \
+      index-> [date (%Y-%m-%d)], columns-> [id_gecko], values -> [last price for each day]
   """
   assert type(id_gecko) is str, 'id_gecko should be a str'
   assert type(vs_currency) is str, 'vs_currency should be a str'
   
-  url ='https://api.coingecko.com/api/v3' + f'/coins/{id_gecko}/market_chart'
+  url = 'https://api.coingecko.com/api/v3' + f'/coins/{id_gecko}/market_chart'
   
   try:
     res = requests.get(url, params = {
@@ -79,6 +86,10 @@ def gecko_hist(id_gecko:str, vs_currency:str = 'usd', days = 'max'):
     print("Http Error:", errh)
 
 
+# ------------------------------------------------------------------------------
+# DefiLlama
+# ------------------------------------------------------------------------------
+    
 def llama_hist(id_llama:str, timestamp = int(time.mktime(datetime.now().timetuple()))):
   """DefiLlama - Get n-day price for tokens listed in defillama
   If no timestamp is passed, current time is used.
@@ -92,7 +103,8 @@ def llama_hist(id_llama:str, timestamp = int(time.mktime(datetime.now().timetupl
     timestamp (float): UNIX timestamp of time when you want historical prices
   
   Returns:
-    df (DataFrame): timeseries df containing price for timestamp queued - index -> [date(%Y-%m-%d)], columns -> [id_llama], values -> [price]
+    df (DataFrame): timeseries df containing price for timestamp queued \
+      index -> [date(%Y-%m-%d)], columns -> [id_llama], values -> [price]
   """
   assert type(id_llama) is str, 'id_llama should be a str'
   assert type(timestamp) is int, 'timestamp should be an int representing unix timestamp'
@@ -119,6 +131,10 @@ def llama_hist(id_llama:str, timestamp = int(time.mktime(datetime.now().timetupl
     print("Http Error:", errh)
 
 
+# ------------------------------------------------------------------------------
+# Zapper
+# ------------------------------------------------------------------------------
+
 def zapper_current_network(credentials:str, network:str):
   """Zapper - Get current prices for all tokens supported in zapper - for a given network
   If bad credentials passed - returns HTTP error on bad auth
@@ -129,7 +145,8 @@ def zapper_current_network(credentials:str, network:str):
     network (str): desired network for token price search (e.g. ethereum, arbitrum, optimism)
   
   Returns:
-    df (DataFrame): df containing - index -> [date(%Y-%m-%d)], columns -> [address, name, symbol, coingeckoId, price, network], values -> [described in cols]
+    df (DataFrame): df containing - index -> [date(%Y-%m-%d)], \
+      columns -> [address, name, symbol, coingeckoId, price, network], values -> [described in cols]
   """
   assert type(credentials) is str, 'credentials should be a str'
   assert type(network) is str, 'network should be a str'
@@ -158,6 +175,10 @@ def zapper_current_network(credentials:str, network:str):
     print("Http Error:", errh)
 
 
+# ------------------------------------------------------------------------------
+# CoinMarketCap
+# ------------------------------------------------------------------------------
+
 def cmc_current(credentials:str, id_cmc:str):
   """Get current price of coin or coins (passed as csv to url)
   id_cmc can't end in ","
@@ -168,10 +189,11 @@ def cmc_current(credentials:str, id_cmc:str):
       many ids for group search: "id_cmc1, id_cmc2, ..., id_cmcN"
   
   Returns:
-    df (DataFrame): timeseries df (one row) containing current px for each asset in columns - index -> [date (%Y-%m-%d)], columns -> [id_cmc], values -> [current price]
+    df (DataFrame): timeseries df (one row) containing current px for each asset in columns \
+      index -> [date (%Y-%m-%d)], columns -> [id_cmc], values -> [current price]
   """
   assert type(credentials) is str, 'credentials should be a str'
-  assert type(id_cmc) is str, 'network should be a str'
+  assert type(id_cmc) is str, 'id_cmc should be a str'
 
   # Pass slugs here because in params, requests converts them to 'bitcoin%2Cethereum' and cmc api takes 'bitcoin,ethereum'
   url = f"https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?slug={id_cmc}"
@@ -195,5 +217,9 @@ def cmc_current(credentials:str, id_cmc:str):
   
   except requests.exceptions.HTTPError as errh:
     print("Http Error:", errh)
-  
+
+
+# ------------------------------------------------------------------------------
+# Etherscan
+# ------------------------------------------------------------------------------
 
