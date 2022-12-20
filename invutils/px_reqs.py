@@ -1,7 +1,7 @@
 """Function definitions for price requests to various APIs
 """
 
-import invutils.util.helpers as hl
+import invutils.invutils.util.helpers as hl
 from .constants import *
 
 import requests
