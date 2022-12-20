@@ -2,9 +2,9 @@
 # Blockchains
 # ------------------------------------------------------------------------------
 
-ETHEREUM = 'ethereum',
-POLYGON = 'polygon',
-ARBITRUM = 'arbitrum',
+ETHEREUM = 'ethereum'
+POLYGON = 'polygon'
+ARBITRUM = 'arbitrum'
 BINANCE = 'bnb'
 AVALANCHE = 'avalanche'
 FANTOM = 'fantom'
