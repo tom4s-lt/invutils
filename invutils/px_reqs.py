@@ -284,7 +284,7 @@ def exp_univ2_current(credentials:str, network:str, pool:str, subj1:str, subj2:s
 
     current_date = pd.to_datetime(datetime.now().strftime("%Y-%m-%d"))
 
-    df = pd.DataFrame(pool_info[pool]['price'], columns = [f"{network}:{pool}"], index = current_date)
+    df = pd.DataFrame(pool_info[pool]['price'], columns = [f"{network}:{pool}"], index = [current_date])
 
     return df
   
