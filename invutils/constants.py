@@ -83,7 +83,7 @@ DEFILLAMA_ENDPOINTS = {
 ZAPPER_ENDPOINTS = {
   
   'base':                   'https://api.zapper.fi/v2',
-  'px_current':             'https://api.zapper.fi/v2/price',
+  'px_current':             'https://api.zapper.fi/v2/prices',
 
 }
 
