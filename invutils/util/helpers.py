@@ -1,8 +1,10 @@
 from .constants import *
 
-def get_chain(chain):
+def check_chain(chain):
   
-  for network in NETOWRKS:
-    
-    try:
-      NETWORKS[]
+  try:
+    network = chain
+    return network
+  
+  except KeyError:
+    print('Wrong Network - Either bad written or not included')
