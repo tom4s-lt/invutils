@@ -9,7 +9,7 @@ BINANCE = 'bnb'
 AVALANCHE = 'avalanche'
 FANTOM = 'fantom'
 OPTIMISM = 'optimism'
-XDAI = 'xdai'
+GNOSIS = 'xdai'
 ROPSTEN = 'ropsten'
 KOVAN = 'kovan'
 GOERLI = 'goerli'
@@ -27,7 +27,7 @@ NETWORK_INFO = {
   AVALANCHE:              {'explorer': 'snowtrace'},
   FANTOM:                 {'explorer': 'ftmscan'},
   OPTIMISM:               {'explorer': 'optimistic.etherscan'},
-  XDAI:                   {},
+  GNOSIS:                 {'explorer': 'gnosisscan'},
   ROPSTEN:                {},
   KOVAN:                  {},
   GOERLI:                 {},
