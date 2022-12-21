@@ -31,7 +31,7 @@ Future plans include:
 ## Installation
 
 ```sh
-pip install git+https://github.com/xtom4s/inverutilities.git
+pip install git+https://github.com/xtom4s/invutils
 ```
 
 ```python
