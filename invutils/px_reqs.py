@@ -242,7 +242,8 @@ def exp_univ2_current(credentials:str, network:str, pool:str, subj1:str, subj2:s
     subj2_dec (int): number of decimals of subj2 token
   
   Returns:
-    df (DataFrame): timeseries df (one row) containing current px for each asset in columns - index -> [date (%Y-%m-%d)], columns -> [id_cmc], values -> [current price]
+    df (DataFrame): timeseries df (one row) containing current px for the pool lp token \
+      index -> [date (%Y-%m-%d)], columns -> ['network:pool'], values -> [current price]
   """
   assert type(credentials) is str, 'credentials should be a str'
   assert type(network) is str, 'network should be a str'
