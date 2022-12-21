@@ -19,8 +19,10 @@ Future plans include:
 	2. [DefiLlama](#defillama)
 	3. [Zapper](#zapper)
 	4. [CoinMarketCap](#coinmarketcap)
+	5. [Chain Explorer APIs](#chain-explorer-apis)
 3. [Models](#models)
-	1. [px_reqs](#px_reqs)
+	1. [Tokens](#tokens)
+	2. [Univ2 pools](#univ2-pools)
 4. [Example Usage](#example-usage)
 5. [Inspiration & References](#inspiration--references)
 
@@ -43,47 +45,52 @@ import invutils.px_reqs as prq
 ### [CoinGecko](https://www.coingecko.com/)
 - [API Documentation](https://www.coingecko.com/en/api/documentation)
 - Free Tier available
-	- Current prices
-	- Historical prices
 - No key needed
 - RPM limit: 10-50 calls/min
+- Daily Limit: Unknown
 - Monthly limit: Unknown
 
 ### [DefiLlama](https://defillama.com/)
 - [API Documentation](https://defillama.com/docs/api)
-- Free
-	- Current prices
-	- Historical Prices
+- Free & Open
 - No key needed
 - RPM limit: not stated
+- Daily Limit: Unknown
 - Monthly limit: Unknown
 
 ### [Zapper](https://zapper.fi/)
 - [API Documentation](https://studio.zapper.fi/docs/apis/getting-started)
 - Free Tier available
-	- Current prices
 - Key needed
 - RPM Limit: Unknown
+- Daily Limit: Unknown
 - Monthly limit: 10.000 credits/month
 
 ### [CoinMarketCap](https://coinmarketcap.com/)
 - [API Documentation](https://coinmarketcap.com/api/)
 - Free Tier available
-	- Current prices
 - Key needed
 - RPM Limit: 30 calls/min
 - Daily Limit: 333 credits/day
 - Monthly Limit: 10.000 credits/month
+
+### Chain Explorer APIs
+- Etherscan & Etherscan Forks
+- Free Tier available (in all of them)
+- RPS limit: 5 calls/sec
+- Daily Limit: Unknown
+- Monthly Limit: Unknown
 
 <br>
 
 ## Models
 Description of the model used to define each user-generated object needed to interact with invutils.
 
-<br>
-
 ### px_reqs
-Tokens defined by:
+
+#### Tokens
+
+Defined by:
 - _id_gecko_ (string) - CoinGecko id of the token (e.g. 'bitcoin', 'ethereum', 'usd-coin', 'dai')
 - _id_cmc_ (string) - CoinMarketCap slug of the token (e.g. 'bitcoin', 'ethereum', 'usd-coin', 'multi-collateral-dai')
 - _id_llama_ (string) - DefiLlama id of the token (consists of 'chain:address')
@@ -92,6 +99,17 @@ Tokens defined by:
 - _id_zapper_ (string) - There is no definition. Suggested: use 'network:address' as in defillama with zapper's network names (for uniqueness)
 
 Mapping from token ID attributes to ticker is encouraged to be done by the user, and isn't included.
+
+#### Univ2 pools
+
+Defined by:
+- _network_ (string): network where the pool is located (see available networks & denomination in [constants.py](https://github.com/xtom4s/invutils/blob/main/invutils/constants.py))
+- _address_ (string): pool contract address
+- _subj1_ (string): token contract address for one of the pool tokens
+- _subj2_ (string): token contract address for the other pool token
+- _pool_dec_ (string): number of decimals of the pool token (lp token)
+- _subj1_dec_ (string): number of decimals of the first token of the pool
+- _subj2_dec_ (string): number of decimals of the second token of the pool
 
 <br>
 
@@ -189,8 +207,28 @@ print(df)
 
 <br>
 
+```python
+import invutils.px_reqs as prq
+
+df = prq.exp_univ2_current(credentials = 'explorer_api_key',
+    network = 'ethereum',
+    pool = '0x795065dCc9f64b5614C407a6EFDC400DA6221FB0',  # SUSHI-ETH pool in Sushiswap
+    subj1 = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',  # WETH address
+    subj2 = '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',  # SUSHI address
+    pool_dec = 18,
+    subj1_dec = 18,
+    subj2_dec = 18
+)
+print(df)
+```
+```text
+            ethereum:0x795065dCc9f64b5614C407a6EFDC400DA6221FB0
+2022-12-21                                          91.917118 
+```
+
 ## Inspiration & References
 
 - [defi](https://github.com/gauss314/defi) - DeFi open source tools from [gauss314](https://github.com/gauss314)
 - [ctc](https://github.com/fei-protocol/checkthechain) - tool for collecting and analyzing data from Ethereum & EVM chains
 - [transpose](https://github.com/TransposeData/transpose-python-sdk) python SDK - A modern python wrapper for the Transpose API Suite
+- [defi-protocols](https://github.com/KarpatkeyDAO/defi-protocols) - python library from [Karpatkey](https://twitter.com/karpatkey)
