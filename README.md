@@ -77,6 +77,7 @@ import invutils.px_reqs as prq
 ### Chain Explorer APIs
 - Etherscan & Etherscan Forks
 - Free Tier available (in all of them)
+- Key Needed
 - RPS limit: 5 calls/sec
 - Daily Limit: Unknown
 - Monthly Limit: Unknown
