@@ -116,6 +116,7 @@ def llama_hist(id_llama:str, timestamp = int(time.mktime(datetime.now().timetupl
 
   try:    
     res = requests.get(url)
+    res.raise_for_status()
     
     df = pd.DataFrame(res.json()['coins']) # res.json()['prices'] can come as empty dic
 
@@ -260,6 +261,7 @@ def exp_univ2_current(credentials:str, network:str, pool:str, subj1:str, subj2:s
     url = EXPLORER_ENDPOINTS[NETWORK_INFO[network]['explorer']]
 
     res = requests.get(url + EXPLORER_PARAMS['ERC_20_TOKEN_SUPPLY'] % (pool, credentials))
+    res.raise_for_status()
     
     pool_info = {}
     pool_info[pool] = {'balance': int(res.json()['result']) / 10**pool_dec} # # could be improved for use without univ2 model
@@ -271,6 +273,7 @@ def exp_univ2_current(credentials:str, network:str, pool:str, subj1:str, subj2:s
     for subj in subj_dec:
 
       res = requests.get(url + EXPLORER_PARAMS['ERC_20_TOKEN_BALANCE'] % (subj, pool, credentials))
+      res.raise_for_status()
 
       pool_info[subj] = {
           'balance': int(res.json()['result']) / 10**subj_dec[subj],
