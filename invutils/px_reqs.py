@@ -11,9 +11,9 @@ import time
 import base64
 
 
-# ------------------------------------------------------------------------------
+# ==============================================================================
 # CoinGecko
-# ------------------------------------------------------------------------------
+# ==============================================================================
 
 def gecko_current(id_gecko:str, vs_currencies:str = 'usd'):
   """CoinGecko - Get current price of coin or coins (coins passed as csv to url)
@@ -89,9 +89,9 @@ def gecko_hist(id_gecko:str, vs_currency:str = 'usd', days = 'max'):
     print("Http Error:", errh)
 
 
-# ------------------------------------------------------------------------------
+# ==============================================================================
 # DefiLlama
-# ------------------------------------------------------------------------------
+# ==============================================================================
     
 def llama_hist(id_llama:str, timestamp = int(time.mktime(datetime.now().timetuple()))):
   """DefiLlama - Get n-day price for tokens listed in defillama
@@ -135,9 +135,9 @@ def llama_hist(id_llama:str, timestamp = int(time.mktime(datetime.now().timetupl
     print("Http Error:", errh)
 
 
-# ------------------------------------------------------------------------------
+# ==============================================================================
 # CoinMarketCap
-# ------------------------------------------------------------------------------
+# ==============================================================================
 
 def cmc_current(credentials:str, id_cmc:str):
   """Get current price of coin or coins (passed as csv to url)
@@ -179,9 +179,9 @@ def cmc_current(credentials:str, id_cmc:str):
     print("Http Error:", errh)
 
 
-# ------------------------------------------------------------------------------
+# ==============================================================================
 # Zapper
-# ------------------------------------------------------------------------------
+# ==============================================================================
 
 def zapper_current_network(credentials:str, network:str):
   """Zapper - Get current prices for all tokens supported in zapper - for a given network
@@ -223,9 +223,9 @@ def zapper_current_network(credentials:str, network:str):
     print("Http Error:", errh)
 
 
-# ------------------------------------------------------------------------------
+# ==============================================================================
 # Etherscan
-# ------------------------------------------------------------------------------
+# ==============================================================================
 
 
 def exp_univ2_current(credentials:str, network:str, pool:str, subj1:str, subj2:str, pool_dec:int = 18, subj1_dec:int = 18, subj2_dec:int = 18):
