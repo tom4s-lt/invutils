@@ -1,7 +1,7 @@
 """Function definitions for price requests to various APIs
 """
 
-from .util import helpers as hl
+from .utils import helpers as hl
 from .constants import *
 
 import requests
