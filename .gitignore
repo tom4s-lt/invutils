@@ -1,6 +1,9 @@
 # Environment variables - NEVER commit API keys!
 .env
 
+# Other files
+TODO.md
+
 # Python
 __pycache__/
 *.py[cod]

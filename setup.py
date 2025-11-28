@@ -29,13 +29,17 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         "requests>=2.25.0",
-        "pandas>=1.2.0",
-        "urllib3>=1.26.0",
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
         "Topic :: Office/Business :: Financial",
+        "Topic :: Software Development :: Libraries :: Python Modules",
     ],
+    keywords="cryptocurrency bitcoin ethereum price api coingecko defillama",
+    project_urls={
+        "Source": "https://github.com/xtom4s/invutils",
+        "Changelog": "https://github.com/xtom4s/invutils/blob/main/CHANGELOG.md",
+    },
 )

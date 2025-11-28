@@ -19,7 +19,12 @@ pip install git+https://github.com/xtom4s/invutils
 ## Quick Start
 
 ```python
+# Import from main package
 from invutils import gecko_price_current, gecko_price_hist, llama_price_hist
+
+# Or import from organized submodules (v1.2.0+)
+from invutils.prices import gecko_price_current
+from invutils.prices.coingecko import gecko_price_current
 
 # Get current prices from CoinGecko (requires API key)
 prices = gecko_price_current('bitcoin,ethereum,solana', api_key='your-api-key-here')
@@ -147,32 +152,7 @@ All functions return `None` on error and log the issue. Common errors:
 
 ## Changelog
 
-All notable changes to this project will be documented here.
-
-### [1.1.0] - 2025-11-27
-
-**Added:**
-- CoinGecko price functions (current and historical)
-- DefiLlama historical price function
-- API key support for CoinGecko Demo tier
-- Comprehensive error handling and logging
-- Type hints throughout the codebase
-- Clean public API via `__init__.py`
-- Simple configuration management
-
-**Features:**
-- `gecko_price_current()` - Get current cryptocurrency prices from CoinGecko
-- `gecko_price_hist()` - Get historical price data from CoinGecko
-- `llama_price_hist()` - Get historical/current prices from DefiLlama
-- Support for multiple coins in a single request
-- Configurable timeout settings
-- Detailed error logging for debugging
-
-### [1.0.0] - Initial Release
-
-**Added:**
-- Initial package structure
-- Basic API integration framework
+Can be found in the CHANGELOG.md file.
 
 ## License
 
