@@ -13,6 +13,7 @@ from .config import (
     DEFILLAMA_ENDPOINTS,
     DEFAULT_TIMEOUT
 )
+from .utils import handle_api_request
 
 # Set up logger for this module
 logger = logging.getLogger(__name__)
@@ -55,36 +56,13 @@ def gecko_price_current(id_gecko: str, vs_currencies: str = 'usd', api_key: Opti
   if api_key:
     headers['x-cg-demo-api-key'] = api_key
   
-  try:
-    res = requests.get(url, params={'ids': id_gecko, 'vs_currencies': vs_currencies}, headers=headers, timeout=DEFAULT_TIMEOUT)
-    res.raise_for_status()
-    return res.json()
-
-  # Request errors handling
-  except requests.exceptions.HTTPError as e:
-    # Server returned error status (400, 404, 500, etc.)
-    logger.error(f"CoinGecko HTTP Error {e.response.status_code}: {e}")
-    return None
-  
-  except requests.exceptions.Timeout as e:
-    # Request took longer than DEFAULT_TIMEOUT seconds
-    logger.error(f"CoinGecko Timeout Error: Request took longer than {DEFAULT_TIMEOUT}s")
-    return None
-  
-  except requests.exceptions.ConnectionError as e:
-    # Network problem (DNS failure, refused connection, etc.)
-    logger.error(f"CoinGecko Connection Error: Could not connect to API - {e}")
-    return None
-  
-  except requests.exceptions.RequestException as e:
-    # Catch-all for any other requests errors
-    logger.error(f"CoinGecko Request Error: {e}")
-    return None
-  
-  except (ValueError, KeyError) as e:
-    # JSON decode error or missing expected key
-    logger.error(f"CoinGecko Response Error: Invalid or unexpected response format - {e}")
-    return None
+  # Make request with error handling
+  return handle_api_request(
+    'CoinGecko',
+    lambda: requests.get(url, params={'ids': id_gecko, 'vs_currencies': vs_currencies}, 
+                        headers=headers, timeout=DEFAULT_TIMEOUT),
+    DEFAULT_TIMEOUT
+  )
 
 
 def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, str] = 'max', api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
@@ -124,36 +102,13 @@ def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, s
   if api_key:
     headers['x-cg-demo-api-key'] = api_key
   
-  try:
-    res = requests.get(url, params={'vs_currency': vs_currency, 'days': days}, headers=headers, timeout=DEFAULT_TIMEOUT)
-    res.raise_for_status()
-    return res.json()
-  
-  # Request errors handling
-  except requests.exceptions.HTTPError as e:
-    # Server returned error status (400, 404, 500, etc.)
-    logger.error(f"CoinGecko HTTP Error {e.response.status_code}: {e}")
-    return None
-  
-  except requests.exceptions.Timeout as e:
-    # Request took longer than DEFAULT_TIMEOUT seconds
-    logger.error(f"CoinGecko Timeout Error: Request took longer than {DEFAULT_TIMEOUT}s")
-    return None
-  
-  except requests.exceptions.ConnectionError as e:
-    # Network problem (DNS failure, refused connection, etc.)
-    logger.error(f"CoinGecko Connection Error: Could not connect to API - {e}")
-    return None
-  
-  except requests.exceptions.RequestException as e:
-    # Catch-all for any other requests errors
-    logger.error(f"CoinGecko Request Error: {e}")
-    return None
-  
-  except (ValueError, KeyError) as e:
-    # JSON decode error or missing expected key
-    logger.error(f"CoinGecko Response Error: Invalid or unexpected response format - {e}")
-    return None
+  # Make request with error handling
+  return handle_api_request(
+    'CoinGecko',
+    lambda: requests.get(url, params={'vs_currency': vs_currency, 'days': days}, 
+                        headers=headers, timeout=DEFAULT_TIMEOUT),
+    DEFAULT_TIMEOUT
+  )
 
 # ==============================================
 # DefiLlama
@@ -195,40 +150,18 @@ def llama_price_hist(id_llama: str, timestamp: Optional[int] = None) -> Optional
   
   url = DEFILLAMA_ENDPOINTS['price_hist'] % (timestamp, id_llama)
 
-  try:    
-    res = requests.get(url, timeout=DEFAULT_TIMEOUT)
-    res.raise_for_status()
-    
-    data = res.json()
-    # Check if 'coins' key exists in response
-    if 'coins' not in data:
-      logger.error("DefiLlama Response Error: 'coins' key not found in response")
-      return None
-    
-    return data['coins']
-
-  # Request errors handling
-  except requests.exceptions.HTTPError as e:
-    # Server returned error status (400, 404, 500, etc.)
-    logger.error(f"DefiLlama HTTP Error {e.response.status_code}: {e}")
+  # Make request with error handling
+  result = handle_api_request(
+    'DefiLlama',
+    lambda: requests.get(url, timeout=DEFAULT_TIMEOUT),
+    DEFAULT_TIMEOUT
+  )
+  
+  # DefiLlama-specific: Extract 'coins' key from response
+  if result and 'coins' in result:
+    return result['coins']
+  elif result:
+    logger.error("DefiLlama Response Error: 'coins' key not found in response")
     return None
   
-  except requests.exceptions.Timeout as e:
-    # Request took longer than DEFAULT_TIMEOUT seconds
-    logger.error(f"DefiLlama Timeout Error: Request took longer than {DEFAULT_TIMEOUT}s")
-    return None
-  
-  except requests.exceptions.ConnectionError as e:
-    # Network problem (DNS failure, refused connection, etc.)
-    logger.error(f"DefiLlama Connection Error: Could not connect to API - {e}")
-    return None
-  
-  except requests.exceptions.RequestException as e:
-    # Catch-all for any other requests errors
-    logger.error(f"DefiLlama Request Error: {e}")
-    return None
-  
-  except (ValueError, KeyError) as e:
-    # JSON decode error or missing expected key
-    logger.error(f"DefiLlama Response Error: Invalid or unexpected response format - {e}")
-    return None
+  return result
