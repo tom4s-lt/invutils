@@ -1,23 +1,41 @@
-from setuptools import setup, find_packages
+"""Setup configuration for invutils package."""
 
-setup(name = "invutils",
-      description = "Tools aimed at investing and portfolio tracking, mainly for cryptocurrency",
-      version = "1.0.1",
-      url = "https://github.com/xtom4s/inverutilities",
-      license = "MIT License",
-      author = "Tom4s",
-      author_email = "tom4s.rr@gmail.com",
-      packages = find_packages(),
-      install_requires = [  # Fails with ["time", "base64"] - They are removed as they are built-in modules
-	      "requests",
-	      "pandas",
-	      "datetime",
-      	],
-      classifiers = [
-	      "Programming Language :: Python",
-	      "Development Status :: 1 - Beta",
-	      "Intended Audience :: Anyone who knows python",
-	      "License :: OSI Approved :: MIT License",
-	      "Operating System :: OS Independent"
-      	]
+from setuptools import setup, find_packages
+from pathlib import Path
+
+# Read version from package
+version = {}
+with open("invutils/__init__.py") as f:
+    for line in f:
+        if line.startswith("__version__"):
+            exec(line, version)
+            break
+
+# Read README for long description
+readme_file = Path(__file__).parent / "README.md"
+long_description = readme_file.read_text(encoding="utf-8") if readme_file.exists() else ""
+
+setup(
+    name="invutils",
+    version=version["__version__"],
+    description="Tools for cryptocurrency price data retrieval",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="Tom4s",
+    author_email="tom4s.rr@gmail.com",
+    url="https://github.com/xtom4s/invutils",
+    license="MIT",
+    packages=find_packages(),
+    python_requires=">=3.7",
+    install_requires=[
+        "requests>=2.25.0",
+        "pandas>=1.2.0",
+        "urllib3>=1.26.0",
+    ],
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Topic :: Office/Business :: Financial",
+    ],
 )

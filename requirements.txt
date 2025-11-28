@@ -1,0 +1,6 @@
+# Runtime dependencies for invutils
+# These are required for the package to work
+
+requests>=2.25.0
+pandas>=1.2.0
+urllib3>=1.26.0
