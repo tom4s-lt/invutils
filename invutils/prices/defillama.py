@@ -14,23 +14,33 @@ from ..utils import handle_api_request
 logger = logging.getLogger(__name__)
 
 
-def llama_price_hist(id_llama: str, timestamp: Optional[int] = None) -> Optional[Dict[str, Any]]:
+def llama_price_hist(id_llama: str, timestamp: Optional[int] = None) -> Dict[str, Any]:
   """
-  DefiLlama - Get n-day price for tokens listed in defillama
-  If no timestamp is passed, current time is used.
-  If bad id_llama is passed - returns empty json
+  DefiLlama - Get historical/current price data for tokens.
 
   Args:
-    id_llama (str): either of the following
-      defillama id for the desired token ('chain:address')
-      many ids for group search: "id_llama1,id_llama2,...,id_llamaN"
-        
-    timestamp (Optional[int]): UNIX timestamp of time when you want historical prices
-      If None, uses current time
+    id_llama (str): DefiLlama ID(s) - single ('chain:address') or multiple (comma-separated)
+    timestamp (Optional[int]): UNIX timestamp for historical prices (default: current time)
   
   Returns:
-    Optional[Dict]: {defillama_id: {..., 'symbol': symbol, 'price': price}} - Has some other data
-      Returns None on error
+    Dict with standardized format:
+      {
+        "source": "defillama",
+        "fetched_at": 1640995200,
+        "status": "success" | "error",
+        "requested_timestamp": 1640908800,
+        "count": 2,
+        "data": [
+          {
+            "coin_id": "ethereum:0x...",
+            "symbol": "ETH",
+            "price": 2500.0,
+            "timestamp": 1640908800,
+            "confidence": 0.99
+          },
+          ...
+        ]
+      }
   """
 
   # Input validation
@@ -51,18 +61,45 @@ def llama_price_hist(id_llama: str, timestamp: Optional[int] = None) -> Optional
   url = DEFILLAMA_ENDPOINTS['price_hist'] % (timestamp, id_llama)
 
   # Make request with error handling
-  result = handle_api_request(
+  raw_result = handle_api_request(
     'DefiLlama',
     lambda: requests.get(url, timeout=DEFAULT_TIMEOUT),
     DEFAULT_TIMEOUT
   )
   
-  # DefiLlama-specific: Extract 'coins' key from response
-  if result and 'coins' in result:
-    return result['coins']
-  elif result:
-    logger.error("DefiLlama Response Error: 'coins' key not found in response")
-    return None
+  # Build standardized response
+  fetched_at = int(time.time())
   
-  return result
+  # Check if result is valid and has 'coins' key
+  if raw_result is None or 'coins' not in raw_result:
+    return {
+      "source": "defillama",
+      "fetched_at": fetched_at,
+      "status": "error",
+      "requested_timestamp": timestamp,
+      "count": 0,
+      "data": []
+    }
+  
+  # Transform raw API response to standard format
+  # DefiLlama returns: {'chain:address': {'symbol': ..., 'price': ..., ...}}
+  data = []
+  for coin_id, coin_data in raw_result['coins'].items():
+    data.append({
+      "coin_id": coin_id,
+      "symbol": coin_data.get('symbol', 'UNKNOWN'),
+      "price": coin_data.get('price'),
+      "timestamp": coin_data.get('timestamp', timestamp),
+      "confidence": coin_data.get('confidence', None),
+      "decimals": coin_data.get('decimals', None)
+    })
+  
+  return {
+    "source": "defillama",
+    "fetched_at": fetched_at,
+    "status": "success" if data else "error",
+    "requested_timestamp": timestamp,
+    "count": len(data),
+    "data": data
+  }
 
