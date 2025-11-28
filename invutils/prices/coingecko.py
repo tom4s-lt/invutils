@@ -96,7 +96,7 @@ def gecko_price_current(id_gecko: str, vs_currencies: str = 'usd', api_key: Opti
   }
 
 
-def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, str] = 'max', api_key: Optional[str] = None) -> Dict[str, Any]:
+def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, str] = '365', api_key: Optional[str] = None) -> Dict[str, Any]:
   """
   CoinGecko - Get historical price data for a coin.
 
