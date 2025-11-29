@@ -6,7 +6,7 @@ A lightweight Python package for retrieving cryptocurrency price data from CoinG
 
 - 🪙 Current and historical cryptocurrency prices from CoinGecko
 - 📊 Historical price data from DefiLlama
-- 🚀 Simple, intuitive API
+- 🚀 Simple, intuitive API with standardized output format
 - 🔒 Type hints and proper error handling
 - 📦 Minimal dependencies
 
@@ -27,22 +27,24 @@ from invutils.prices import gecko_price_current
 from invutils.prices.coingecko import gecko_price_current
 
 # Get current prices from CoinGecko (requires API key)
-prices = gecko_price_current('bitcoin,ethereum,solana', api_key='your-api-key-here')
-print(prices)
-# {'bitcoin': {'usd': 45230.12}, 'ethereum': {'usd': 2341.56}, ...}
+result = gecko_price_current('bitcoin,ethereum', api_key='your-api-key-here')
+print(result)
+# {'source': 'coingecko', 'status': 'success', 'count': 2, 'data': [...]}
 
 # Get historical prices from CoinGecko (requires API key)
-history = gecko_price_hist('ethereum', days=30, api_key='your-api-key-here')
-print(history)
-# {'prices': [[timestamp1, price1], [timestamp2, price2], ...]}
+result = gecko_price_hist('ethereum', days=7, api_key='your-api-key-here')
+print(result)
+# {'source': 'coingecko', 'status': 'success', 'count': 168, 'data': [...]}
 
 # Get prices from DefiLlama (no API key needed)
-llama_prices = llama_price_hist('ethereum:0x0000000000000000000000000000000000000000')
-print(llama_prices)
-# {'ethereum:0x0000...': {'symbol': 'ETH', 'price': 2341.56, ...}}
+result = llama_price_hist('ethereum:0x0000000000000000000000000000000000000000')
+print(result)
+# {'source': 'defillama', 'status': 'success', 'count': 1, 'data': [...]}
 ```
 
 ## API Information
+
+### Prices
 
 - CoinGecko
     - **Documentation**: [CoinGecko API Docs (Demo)](https://docs.coingecko.com/v3.0.1/reference/authentication) (package uses Demo endpoints)
@@ -65,15 +67,13 @@ Get current cryptocurrency prices from CoinGecko.
 - `api_key` (str, required): CoinGecko Demo API key - required for API access (default: `None`)
 
 **Returns:**
-- `dict`: Price data for requested coins, or `None` on error
+- `dict`: Standardized response with `source`, `status`, `count`, and `data` array
 
 **Example:**
 ```python
-# With Demo API key (required)
-gecko_price_current('bitcoin,ethereum', api_key='your-api-key-here')
-
-# Multiple currencies
-gecko_price_current('bitcoin', vs_currencies='usd,eur,gbp', api_key='your-api-key-here')
+result = gecko_price_current('bitcoin,ethereum', api_key='your-api-key-here')
+# Returns: {'source': 'coingecko', 'status': 'success', 'count': 2, 
+#           'data': [{'coin_id': 'bitcoin', 'price': 45000, 'currency': 'usd'}, ...]}
 ```
 
 ### `gecko_price_hist(id_gecko, vs_currency='usd', days='max', api_key=None)`
@@ -87,15 +87,13 @@ Get historical price data from CoinGecko.
 - `api_key` (str, required): CoinGecko Demo API key - required for API access (default: `None`)
 
 **Returns:**
-- `dict`: Dictionary with `'prices'` key containing `[[timestamp_ms, price], ...]`, or `None` on error
+- `dict`: Standardized response with `source`, `status`, `count`, and `data` array of timestamps/prices
 
 **Example:**
 ```python
-# Get 30 days of historical prices
-gecko_price_hist('ethereum', days=30, api_key='your-api-key-here')
-
-# Get all available historical data
-gecko_price_hist('bitcoin', days='max', api_key='your-api-key-here')
+result = gecko_price_hist('ethereum', days=7, api_key='your-api-key-here')
+# Returns: {'source': 'coingecko', 'status': 'success', 'count': 168,
+#           'data': [{'timestamp': 1640908800, 'price': 2341.56}, ...]}
 ```
 
 ### `llama_price_hist(id_llama, timestamp=None)`
@@ -107,18 +105,13 @@ Get historical/current prices from DefiLlama.
 - `timestamp` (int, optional): UNIX timestamp for historical prices (default: current time)
 
 **Returns:**
-- `dict`: Price data with coin addresses as keys, or `None` on error
+- `dict`: Standardized response with `source`, `status`, `count`, and `data` array with token details
 
 **Example:**
 ```python
-# Current prices
-llama_price_hist('ethereum:0x6b175474e89094c44da98b954eedeac495271d0f')
-
-# Historical prices
-llama_price_hist('ethereum:0x6b175474e89094c44da98b954eedeac495271d0f', timestamp=1640000000)
-
-# Multiple tokens
-llama_price_hist('ethereum:0x6b175474e89094c44da98b954eedeac495271d0f,bsc:0xe9e7cea3dedca5984780bafc599bd69add087d56')
+result = llama_price_hist('ethereum:0x0000000000000000000000000000000000000000')
+# Returns: {'source': 'defillama', 'status': 'success', 'count': 1,
+#           'data': [{'coin_id': 'ethereum:0x00...', 'symbol': 'ETH', 'price': 2500, ...}]}
 ```
 
 ## Token ID Formats
@@ -138,7 +131,7 @@ Format: `chain:contract_address`
 
 ## Error Handling
 
-All functions return `None` on error and log the issue. Common errors:
+All functions return a standardized dictionary with `status: "error"` on failure. Check the `status` field to determine success. Common errors:
 - Invalid coin IDs
 - Network issues
 - API rate limits
@@ -148,7 +141,6 @@ All functions return `None` on error and log the issue. Common errors:
 
 - Python ≥ 3.7
 - requests ≥ 2.25.0
-- pandas ≥ 1.2.0
 
 ## Changelog
 

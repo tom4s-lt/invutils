@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented here.
 
+### [1.3.0] - 2025-11-29
+
+**Changed:**
+- **BREAKING**: All price functions now return standardized dictionary format
+- Functions return `{'source': ..., 'status': 'success'/'error', 'count': ..., 'data': [...]}` instead of raw API responses
+- Error handling: Functions now return structured error responses instead of `None`
+
+**Migration:**
+- Check `result['status']` instead of `if result is not None`
+- Access data via `result['data']` array instead of raw API response structure
+- CoinGecko current: `result['data'][0]['price']` instead of `result['bitcoin']['usd']`
+- CoinGecko history: `result['data'][0]['timestamp']` instead of `result['prices'][0][0]`
+- DefiLlama: `result['data'][0]['price']` instead of `result['ethereum:0x...']['price']`
+
 ### [1.2.0] - 2025-11-28
 
 **Changed:**
