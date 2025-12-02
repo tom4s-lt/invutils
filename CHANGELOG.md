@@ -41,8 +41,8 @@ All notable changes to this project will be documented here.
 
 **Features:**
 - `gecko_price_current()` - Get current cryptocurrency prices from CoinGecko
-- `gecko_price_hist()` - Get historical price data from CoinGecko
-- `llama_price_hist()` - Get historical/current prices from DefiLlama
+- `gecko_price_historical()` - Get historical price data from CoinGecko
+- `llama_price_historical()` - Get historical/current prices from DefiLlama
 - Support for multiple coins in a single request
 - Configurable timeout settings
 - Detailed error logging for debugging

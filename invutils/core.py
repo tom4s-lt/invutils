@@ -5,7 +5,7 @@ Please import from invutils.prices submodules instead:
     - invutils.prices.coingecko for CoinGecko functions
     - invutils.prices.defillama for DefiLlama functions
 
-Or simply use: from invutils import gecko_price_current, gecko_price_hist, llama_price_hist
+Or simply use: from invutils import gecko_price_current, gecko_price_historical, llama_price_historical
 """
 
 import warnings
@@ -38,14 +38,14 @@ warnings.warn(
 # Coingecko
 # ==============================================
 
-def gecko_price_current(id_gecko: str, vs_currencies: str = 'usd', api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
+def gecko_price_current(id: str, vs_currencies: str = 'usd', api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
   """
   CoinGecko - Get current price of coin or coins (coins passed as csv to url)
   
   Args:
-    id_gecko (str): either of the following
+    id (str): either of the following
       coingecko id for the desired asset/coin/token
-      many ids for group search: "id_gecko1,id_gecko1,...,id_geckoN"
+      many ids for group search: "id1,id2,...,idN"
     vs_currencies (str, optional)
     api_key (str, optional): CoinGecko Demo API key
         
@@ -55,10 +55,10 @@ def gecko_price_current(id_gecko: str, vs_currencies: str = 'usd', api_key: Opti
   """
 
   # Input validation
-  if not isinstance(id_gecko, str):
-    raise TypeError(f'id_gecko must be a string, got {type(id_gecko).__name__}')
-  if not id_gecko.strip():
-    raise ValueError('id_gecko cannot be empty or whitespace')
+  if not isinstance(id, str):
+    raise TypeError(f'id must be a string, got {type(id).__name__}')
+  if not id.strip():
+    raise ValueError('id cannot be empty or whitespace')
   
   if not isinstance(vs_currencies, str):
     raise TypeError(f'vs_currencies must be a string, got {type(vs_currencies).__name__}')
@@ -75,19 +75,19 @@ def gecko_price_current(id_gecko: str, vs_currencies: str = 'usd', api_key: Opti
   # Make request with error handling
   return handle_api_request(
     'CoinGecko',
-    lambda: requests.get(url, params={'ids': id_gecko, 'vs_currencies': vs_currencies}, 
+    lambda: requests.get(url, params={'ids': id, 'vs_currencies': vs_currencies}, 
                         headers=headers, timeout=DEFAULT_TIMEOUT),
     DEFAULT_TIMEOUT
   )
 
 
-def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, str] = 'max', api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
+def gecko_price_historical(id: str, vs_currency: str = 'usd', days: Union[int, str] = 'max', api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
   """
   CoinGecko - Get CoinGecko historical price data of coin.
-  If bad id_gecko is passed - returns HTTP error
+  If bad id is passed - returns HTTP error
 
   Args:
-    id_gecko (str): coingecko id for the desired asset/coin/token
+    id (str): coingecko id for the desired asset/coin/token
     vs_currency (str, optional)
     days (int | str:'max', optional): number of days for backwards price search (1-90 days: hourly data, above 90 days: daily data) - UTC time for get request
     api_key (str, optional): CoinGecko Demo API key
@@ -98,10 +98,10 @@ def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, s
   """
 
   # Input validation
-  if not isinstance(id_gecko, str):
-    raise TypeError(f'id_gecko must be a string, got {type(id_gecko).__name__}')
-  if not id_gecko.strip():
-    raise ValueError('id_gecko cannot be empty or whitespace')
+  if not isinstance(id, str):
+    raise TypeError(f'id must be a string, got {type(id).__name__}')
+  if not id.strip():
+    raise ValueError('id cannot be empty or whitespace')
   
   if not isinstance(vs_currency, str):
     raise TypeError(f'vs_currency must be a string, got {type(vs_currency).__name__}')
@@ -111,7 +111,7 @@ def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, s
   if not isinstance(days, (int, str)):
     raise TypeError(f'days must be an integer or string, got {type(days).__name__}')
   
-  url = COINGECKO_ENDPOINTS['price_hist'] % (id_gecko)
+  url = COINGECKO_ENDPOINTS['price_historical'] % (id)
   
   # Add API key to headers if provided
   headers = {}
@@ -130,16 +130,16 @@ def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, s
 # DefiLlama
 # ==============================================
 
-def llama_price_hist(id_llama: str, timestamp: Optional[int] = None) -> Optional[Dict[str, Any]]:
+def llama_price_historical(id: str, timestamp: Optional[int] = None) -> Optional[Dict[str, Any]]:
   """
   DefiLlama - Get n-day price for tokens listed in defillama
   If no timestamp is passed, current time is used.
-  If bad id_llama is passed - returns empty json
+  If bad id is passed - returns empty json
 
   Args:
-    id_llama (str): either of the following
+    id (str): either of the following
       defillama id for the desired token ('chain:address')
-      many ids for group search: "id_llama1,id_llama2,...,id_llamaN"
+      many ids for group search: "id1,id2,...,idN"
         
     timestamp (Optional[int]): UNIX timestamp of time when you want historical prices
       If None, uses current time
@@ -150,10 +150,10 @@ def llama_price_hist(id_llama: str, timestamp: Optional[int] = None) -> Optional
   """
 
   # Input validation
-  if not isinstance(id_llama, str):
-    raise TypeError(f'id_llama must be a string, got {type(id_llama).__name__}')
-  if not id_llama.strip():
-    raise ValueError('id_llama cannot be empty or whitespace')
+  if not isinstance(id, str):
+    raise TypeError(f'id must be a string, got {type(id).__name__}')
+  if not id.strip():
+    raise ValueError('id cannot be empty or whitespace')
   
   # Use current time if timestamp not provided
   if timestamp is None:
@@ -164,7 +164,7 @@ def llama_price_hist(id_llama: str, timestamp: Optional[int] = None) -> Optional
   if timestamp <= 0:
     raise ValueError(f'timestamp must be positive, got {timestamp}')
   
-  url = DEFILLAMA_ENDPOINTS['price_hist'] % (timestamp, id_llama)
+  url = DEFILLAMA_ENDPOINTS['price_historical'] % (timestamp, id)
 
   # Make request with error handling
   result = handle_api_request(

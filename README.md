@@ -20,7 +20,7 @@ pip install git+https://github.com/xtom4s/invutils
 
 ```python
 # Import from main package
-from invutils import gecko_price_current, gecko_price_hist, llama_price_hist
+from invutils import gecko_price_current, gecko_price_historical, llama_price_historical
 
 # Or import from organized submodules (v1.2.0+)
 from invutils.prices import gecko_price_current
@@ -32,12 +32,12 @@ print(result)
 # {'source': 'coingecko', 'status': 'success', 'count': 2, 'data': [...]}
 
 # Get historical prices from CoinGecko (requires API key)
-result = gecko_price_hist('ethereum', days=7, api_key='your-api-key-here')
+result = gecko_price_historical('ethereum', days=7, api_key='your-api-key-here')
 print(result)
 # {'source': 'coingecko', 'status': 'success', 'count': 168, 'data': [...]}
 
 # Get prices from DefiLlama (no API key needed)
-result = llama_price_hist('ethereum:0x0000000000000000000000000000000000000000')
+result = llama_price_historical('ethereum:0x0000000000000000000000000000000000000000')
 print(result)
 # {'source': 'defillama', 'status': 'success', 'count': 1, 'data': [...]}
 ```
@@ -57,12 +57,12 @@ print(result)
 
 ## API Reference
 
-### `gecko_price_current(id_gecko, vs_currencies='usd', api_key=None)`
+### `gecko_price_current(id, vs_currencies='usd', api_key=None)`
 
 Get current cryptocurrency prices from CoinGecko.
 
 **Parameters:**
-- `id_gecko` (str): Single coin ID or comma-separated IDs (e.g., `'bitcoin'` or `'bitcoin,ethereum'`)
+- `id` (str): Single coin ID or comma-separated IDs (e.g., `'bitcoin'` or `'bitcoin,ethereum'`)
 - `vs_currencies` (str, optional): Currency to price against (default: `'usd'`)
 - `api_key` (str, required): CoinGecko Demo API key - required for API access (default: `None`)
 
@@ -76,12 +76,12 @@ result = gecko_price_current('bitcoin,ethereum', api_key='your-api-key-here')
 #           'data': [{'coin_id': 'bitcoin', 'price': 45000, 'currency': 'usd'}, ...]}
 ```
 
-### `gecko_price_hist(id_gecko, vs_currency='usd', days='max', api_key=None)`
+### `gecko_price_historical(id, vs_currency='usd', days='max', api_key=None)`
 
 Get historical price data from CoinGecko.
 
 **Parameters:**
-- `id_gecko` (str): CoinGecko coin ID (e.g., `'ethereum'`)
+- `id` (str): CoinGecko coin ID (e.g., `'ethereum'`)
 - `vs_currency` (str, optional): Currency to price against (default: `'usd'`)
 - `days` (int or str, optional): Days of history (`1-90` for hourly, `>90` for daily, or `'max'`)
 - `api_key` (str, required): CoinGecko Demo API key - required for API access (default: `None`)
@@ -91,17 +91,17 @@ Get historical price data from CoinGecko.
 
 **Example:**
 ```python
-result = gecko_price_hist('ethereum', days=7, api_key='your-api-key-here')
+result = gecko_price_historical('ethereum', days=7, api_key='your-api-key-here')
 # Returns: {'source': 'coingecko', 'status': 'success', 'count': 168,
 #           'data': [{'timestamp': 1640908800, 'price': 2341.56}, ...]}
 ```
 
-### `llama_price_hist(id_llama, timestamp=None)`
+### `llama_price_historical(id, timestamp=None)`
 
 Get historical/current prices from DefiLlama.
 
 **Parameters:**
-- `id_llama` (str): DefiLlama ID in format `chain:address` or comma-separated IDs
+- `id` (str): DefiLlama ID in format `chain:address` or comma-separated IDs
 - `timestamp` (int, optional): UNIX timestamp for historical prices (default: current time)
 
 **Returns:**
@@ -109,7 +109,7 @@ Get historical/current prices from DefiLlama.
 
 **Example:**
 ```python
-result = llama_price_hist('ethereum:0x0000000000000000000000000000000000000000')
+result = llama_price_historical('ethereum:0x0000000000000000000000000000000000000000')
 # Returns: {'source': 'defillama', 'status': 'success', 'count': 1,
 #           'data': [{'coin_id': 'ethereum:0x00...', 'symbol': 'ETH', 'price': 2500, ...}]}
 ```

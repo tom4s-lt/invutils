@@ -9,13 +9,13 @@ __email__ = "tom4s.rr@gmail.com"
 # Import main functions from organized modules
 from .prices import (
     gecko_price_current,
-    gecko_price_hist,
-    llama_price_hist,
+    gecko_price_historical,
+    llama_price_historical,
 )
 
 # Define public API
 __all__ = [
     'gecko_price_current',
-    'gecko_price_hist',
-    'llama_price_hist',
+    'gecko_price_historical',
+    'llama_price_historical',
 ]
