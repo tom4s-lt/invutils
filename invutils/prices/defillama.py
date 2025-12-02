@@ -14,12 +14,12 @@ from ..utils import handle_api_request
 logger = logging.getLogger(__name__)
 
 
-def llama_price_hist(id_llama: str, timestamp: Optional[int] = None) -> Dict[str, Any]:
+def llama_price_historical(id: str, timestamp: Optional[int] = None) -> Dict[str, Any]:
   """
   DefiLlama - Get historical/current price data for tokens.
 
   Args:
-    id_llama (str): DefiLlama ID(s) - single ('chain:address') or multiple (comma-separated)
+    id (str): DefiLlama ID(s) - single ('chain:address') or multiple (comma-separated)
     timestamp (Optional[int]): UNIX timestamp for historical prices (default: current time)
   
   Returns:
@@ -44,10 +44,10 @@ def llama_price_hist(id_llama: str, timestamp: Optional[int] = None) -> Dict[str
   """
 
   # Input validation
-  if not isinstance(id_llama, str):
-    raise TypeError(f'id_llama must be a string, got {type(id_llama).__name__}')
-  if not id_llama.strip():
-    raise ValueError('id_llama cannot be empty or whitespace')
+  if not isinstance(id, str):
+    raise TypeError(f'id must be a string, got {type(id).__name__}')
+  if not id.strip():
+    raise ValueError('id cannot be empty or whitespace')
   
   # Use current time if timestamp not provided
   if timestamp is None:
@@ -58,7 +58,7 @@ def llama_price_hist(id_llama: str, timestamp: Optional[int] = None) -> Dict[str
   if timestamp <= 0:
     raise ValueError(f'timestamp must be positive, got {timestamp}')
   
-  url = DEFILLAMA_ENDPOINTS['price_hist'] % (timestamp, id_llama)
+  url = DEFILLAMA_ENDPOINTS['price_historical'] % (timestamp, id)
 
   # Make request with error handling
   raw_result = handle_api_request(

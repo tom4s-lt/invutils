@@ -13,12 +13,12 @@ from ..utils import handle_api_request
 logger = logging.getLogger(__name__)
 
 
-def gecko_price_current(id_gecko: str, vs_currencies: str = 'usd', api_key: Optional[str] = None) -> Dict[str, Any]:
+def gecko_price_current(id: str, vs_currencies: str = 'usd', api_key: Optional[str] = None) -> Dict[str, Any]:
   """
   CoinGecko - Get current price of coin or coins.
   
   Args:
-    id_gecko (str): CoinGecko ID(s) - single ('bitcoin') or multiple ('bitcoin,ethereum')
+    id (str): CoinGecko ID(s) - single ('bitcoin') or multiple ('bitcoin,ethereum')
     vs_currencies (str, optional): Currency(ies) to price against (default: 'usd')
     api_key (str, optional): CoinGecko Demo API key
         
@@ -37,10 +37,10 @@ def gecko_price_current(id_gecko: str, vs_currencies: str = 'usd', api_key: Opti
   """
 
   # Input validation
-  if not isinstance(id_gecko, str):
-    raise TypeError(f'id_gecko must be a string, got {type(id_gecko).__name__}')
-  if not id_gecko.strip():
-    raise ValueError('id_gecko cannot be empty or whitespace')
+  if not isinstance(id, str):
+    raise TypeError(f'id must be a string, got {type(id).__name__}')
+  if not id.strip():
+    raise ValueError('id cannot be empty or whitespace')
   
   if not isinstance(vs_currencies, str):
     raise TypeError(f'vs_currencies must be a string, got {type(vs_currencies).__name__}')
@@ -57,7 +57,7 @@ def gecko_price_current(id_gecko: str, vs_currencies: str = 'usd', api_key: Opti
   # Make request with error handling
   raw_result = handle_api_request(
     'CoinGecko',
-    lambda: requests.get(url, params={'ids': id_gecko, 'vs_currencies': vs_currencies}, 
+    lambda: requests.get(url, params={'ids': id, 'vs_currencies': vs_currencies}, 
                         headers=headers, timeout=DEFAULT_TIMEOUT),
     DEFAULT_TIMEOUT
   )
@@ -96,12 +96,12 @@ def gecko_price_current(id_gecko: str, vs_currencies: str = 'usd', api_key: Opti
   }
 
 
-def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, str] = '365', api_key: Optional[str] = None) -> Dict[str, Any]:
+def gecko_price_historical(id: str, vs_currency: str = 'usd', days: Union[int, str] = '365', api_key: Optional[str] = None) -> Dict[str, Any]:
   """
   CoinGecko - Get historical price data for a coin.
 
   Args:
-    id_gecko (str): CoinGecko coin ID (e.g., 'bitcoin', 'ethereum')
+    id (str): CoinGecko coin ID (e.g., 'bitcoin', 'ethereum')
     vs_currency (str, optional): Currency to price against (default: 'usd')
     days (int | str, optional): Number of days or 'max' (1-90: hourly, >90: daily)
     api_key (str, optional): CoinGecko Demo API key
@@ -124,10 +124,10 @@ def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, s
   """
 
   # Input validation
-  if not isinstance(id_gecko, str):
-    raise TypeError(f'id_gecko must be a string, got {type(id_gecko).__name__}')
-  if not id_gecko.strip():
-    raise ValueError('id_gecko cannot be empty or whitespace')
+  if not isinstance(id, str):
+    raise TypeError(f'id must be a string, got {type(id).__name__}')
+  if not id.strip():
+    raise ValueError('id cannot be empty or whitespace')
   
   if not isinstance(vs_currency, str):
     raise TypeError(f'vs_currency must be a string, got {type(vs_currency).__name__}')
@@ -137,7 +137,7 @@ def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, s
   if not isinstance(days, (int, str)):
     raise TypeError(f'days must be an integer or string, got {type(days).__name__}')
   
-  url = COINGECKO_ENDPOINTS['price_hist'] % (id_gecko)
+  url = COINGECKO_ENDPOINTS['price_historical'] % (id)
   
   # Add API key to headers if provided
   headers = {}
@@ -160,7 +160,7 @@ def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, s
       "source": "coingecko",
       "fetched_at": fetched_at,
       "status": "error",
-      "coin_id": id_gecko,
+      "coin_id": id,
       "currency": vs_currency,
       "period": {"days": days},
       "count": 0,
@@ -180,7 +180,7 @@ def gecko_price_hist(id_gecko: str, vs_currency: str = 'usd', days: Union[int, s
     "source": "coingecko",
     "fetched_at": fetched_at,
     "status": "success",
-    "coin_id": id_gecko,
+    "coin_id": id,
     "currency": vs_currency,
     "period": {"days": days},
     "count": len(data),
