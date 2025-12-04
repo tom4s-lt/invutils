@@ -51,7 +51,7 @@ def llama_price_historical(id: str, timestamp: Optional[int] = None) -> Dict[str
   
   # Use current time if timestamp not provided
   if timestamp is None:
-    timestamp = int(time.mktime(datetime.now().timetuple()))
+    timestamp = int(time.time())
   
   if not isinstance(timestamp, int):
     raise TypeError(f'timestamp must be an integer, got {type(timestamp).__name__}')
