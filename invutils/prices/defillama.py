@@ -1,7 +1,6 @@
 """DefiLlama API functions for cryptocurrency price data."""
 
 import logging
-from datetime import datetime
 import time
 from typing import Dict, Any, Optional
 

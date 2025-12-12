@@ -42,7 +42,7 @@ print(result)
 # {'source': 'defillama', 'status': 'success', 'count': 1, 'data': [...]}
 ```
 
-## API Information
+## Data Source Information
 
 ### Prices
 
