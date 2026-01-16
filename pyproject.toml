@@ -1,0 +1,132 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "invutils"
+dynamic = ["version"]
+description = "Tools for cryptocurrency price data retrieval"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE.txt"}
+authors = [
+    {name = "tom4s"}
+]
+dependencies = [
+    "requests>=2.25.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-timeout>=2.2.0",
+    "pytest-mock>=3.12.0",
+    "responses>=0.24.0",
+    "python-dotenv>=1.0.0",
+    "mypy>=1.8.0",
+    "ruff>=0.1.0",
+]
+
+[project.urls]
+"Source" = "https://github.com/xtom4s/invutils"
+
+# ==============================================
+# setuptools Configuration
+# ==============================================
+
+[tool.setuptools.dynamic]
+version = {attr = "invutils.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["invutils*"]
+
+# ==============================================
+# pytest Configuration
+# ==============================================
+
+[tool.pytest.ini_options]
+# Minimum pytest version required
+minversion = "7.0"
+
+# Test discovery patterns
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# Test directories
+testpaths = ["tests"]
+
+# Default command line options
+addopts = [
+    "-v",                    # Verbose output
+    "--strict-markers",      # Error on unknown markers
+    "--tb=short",           # Short traceback format
+    "-ra",                  # Show summary of all test outcomes
+]
+
+# Custom test markers
+markers = [
+    "integration: marks tests as integration tests that make real API calls (deselect with '-m \"not integration\"')",
+    "slow: marks tests as slow running tests (deselect with '-m \"not slow\"')",
+]
+
+# ==============================================
+# mypy Configuration
+# ==============================================
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false  # Set to true later for stricter checking
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+# Relax strictness for tests
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+# ==============================================
+# ruff Configuration
+# ==============================================
+
+[tool.ruff]
+target-version = "py37"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "B",   # flake8-bugbear (common bugs)
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade (modern Python syntax)
+    "ARG", # flake8-unused-arguments
+    "SIM", # flake8-simplify
+    "PTH", # flake8-use-pathlib
+]
+ignore = [
+    "E501",  # line too long (ruff format handles this)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "ARG001",  # Unused function arguments (pytest fixtures)
+    "ARG002",  # Unused method arguments
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

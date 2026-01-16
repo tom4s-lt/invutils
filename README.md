@@ -142,9 +142,48 @@ All functions return a standardized dictionary with `status: "error"` on failure
 - Python ≥ 3.7
 - requests ≥ 2.25.0
 
-## Changelog
+## Testing
 
-Can be found in the CHANGELOG.md file.
+### Test Structure
+
+```
+tests/
+├── conftest.py              # Shared pytest fixtures and configuration
+├── unit/                    # Fast unit tests (mocked, no API calls)
+│   ├── test_helpers.py      # Tests for utility functions
+│   ├── test_coingecko.py    # Tests for CoinGecko functions
+│   └── test_defillama.py    # Tests for DefiLlama functions
+└── integration/             # Integration tests (real API calls) (not yet added)
+```
+
+### Setup
+
+Install development dependencies:
+
+```bash
+pip install ".[dev]"
+```
+
+For integration tests, create a `.env` file with your CoinGecko API key:
+
+```bash
+COINGECKO_API_KEY=your_actual_api_key_here
+```
+
+### Running Tests
+
+```bash
+# Run all unit tests (fast, no API calls)
+pytest -m "not integration"
+
+# Run all tests including integration tests
+pytest
+
+# Run with coverage report
+pytest --cov=invutils --cov-report=html
+```
+
+**Note**: Unit tests run quickly without API keys. Integration tests make real API calls and require a CoinGecko API key in the `.env` file.
 
 ## License
 

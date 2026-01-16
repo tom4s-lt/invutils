@@ -15,7 +15,7 @@ from .prices import (
 
 # Define public API
 __all__ = [
-    'gecko_price_current',
-    'gecko_price_historical',
-    'llama_price_historical',
+    "gecko_price_current",
+    "gecko_price_historical",
+    "llama_price_historical",
 ]
