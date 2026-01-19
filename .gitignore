@@ -43,6 +43,13 @@ env/
 .pytest_cache/
 .coverage
 htmlcov/
+.tox/
+
+# Linting and Type Checking
+.ruff_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
 # Jupyter
 .ipynb_checkpoints/

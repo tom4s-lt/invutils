@@ -153,7 +153,7 @@ tests/
 │   ├── test_helpers.py      # Tests for utility functions
 │   ├── test_coingecko.py    # Tests for CoinGecko functions
 │   └── test_defillama.py    # Tests for DefiLlama functions
-└── integration/             # Integration tests (real API calls) (not yet added)
+└── integration/             # Integration tests (real API calls) (to do)
 ```
 
 ### Setup
@@ -164,7 +164,7 @@ Install development dependencies:
 pip install ".[dev]"
 ```
 
-For integration tests, create a `.env` file with your CoinGecko API key:
+For integration tests (yet to come), create a `.env` file with your CoinGecko API key:
 
 ```bash
 COINGECKO_API_KEY=your_actual_api_key_here
