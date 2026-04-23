@@ -24,3 +24,10 @@ DEFILLAMA_ENDPOINTS = {
     "price_historical": f"{DEFILLAMA_BASE_COINS_URL}/prices/historical/%s/%s",  # f'https://coins.llama.fi/prices/historical/{timestamp}/{id}'
     "price_chart": f"{DEFILLAMA_BASE_COINS_URL}/chart/%s",  # f'https://coins.llama.fi/chart/{id}?start=&span=&period='
 }
+
+# Twelve Data
+TWELVEDATA_BASE_URL = "https://api.twelvedata.com"
+TWELVEDATA_ENDPOINTS = {
+    "price_current": f"{TWELVEDATA_BASE_URL}/price",
+    "time_series": f"{TWELVEDATA_BASE_URL}/time_series",
+}

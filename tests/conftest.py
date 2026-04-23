@@ -124,6 +124,72 @@ def mock_llama_price_chart_response() -> Dict[str, Any]:
 
 
 @pytest.fixture
+def mock_twelvedata_price_current_response() -> Dict[str, Any]:
+    """Mock response for Twelve Data /price endpoint."""
+    return {"price": "129.41000"}
+
+
+@pytest.fixture
+def mock_twelvedata_price_historical_response() -> Dict[str, Any]:
+    """Mock response for Twelve Data /time_series endpoint (3 daily bars, stock with volume)."""
+    return {
+        "meta": {
+            "symbol": "AAPL",
+            "interval": "1day",
+            "currency": "USD",
+            "exchange_timezone": "America/New_York",
+            "exchange": "NASDAQ",
+            "type": "Common Stock",
+        },
+        "values": [
+            {
+                "datetime": "2021-01-06",
+                "open": "127.72000",
+                "high": "131.05000",
+                "low": "126.38000",
+                "close": "126.60000",
+                "volume": "155088400",
+            },
+            {
+                "datetime": "2021-01-05",
+                "open": "128.89000",
+                "high": "131.74001",
+                "low": "128.43000",
+                "close": "131.01000",
+                "volume": "97664900",
+            },
+            {
+                "datetime": "2021-01-04",
+                "open": "133.52002",
+                "high": "133.61278",
+                "low": "126.76000",
+                "close": "129.41000",
+                "volume": "143301887",
+            },
+        ],
+        "status": "ok",
+    }
+
+
+@pytest.fixture
+def mock_twelvedata_price_historical_forex_response() -> Dict[str, Any]:
+    """Mock response for Twelve Data /time_series endpoint for a forex pair (no volume)."""
+    return {
+        "meta": {
+            "symbol": "EUR/USD",
+            "interval": "1day",
+            "currency": "USD",
+            "type": "Physical Currency",
+        },
+        "values": [
+            {"datetime": "2021-01-06", "open": "1.23000", "high": "1.23500", "low": "1.22000", "close": "1.22800"},
+            {"datetime": "2021-01-05", "open": "1.22500", "high": "1.23200", "low": "1.22100", "close": "1.23000"},
+        ],
+        "status": "ok",
+    }
+
+
+@pytest.fixture
 def sample_coin_ids() -> Dict[str, Any]:
     """
     Sample coin IDs for testing.
