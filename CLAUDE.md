@@ -14,7 +14,7 @@ Thin Python client for crypto price APIs (CoinGecko, DefiLlama). Stateless, no p
 
 ## Primary consumer
 
-`personal_finance` (`/Users/tomas/tom4s/workspace/git-projects/personal_finance/`) — its ETL pipeline drives most feature requests. Changes that break its call sites need a version bump and a matching PR in that repo (see `PLAN.md` Phase A5).
+`personal_finance` (`/Users/tomas/tom4s/workspace/git-projects/personal_finance/`) — its ETL pipeline drives most feature requests. Changes that break its call sites need a version bump and a matching PR in that repo (see `ROADMAP.md` — A5).
 
 ## Adding a new provider
 
@@ -22,7 +22,7 @@ Thin Python client for crypto price APIs (CoinGecko, DefiLlama). Stateless, no p
 2. Add base URL + endpoints to `invutils/config.py` (`<PROVIDER>_ENDPOINTS` dict).
 3. Implement functions with the response envelope above.
 4. Export from `invutils/prices/__init__.py` and `invutils/__init__.py`.
-5. Unit tests in `tests/unit/test_<provider>.py` using the `responses` library (currently `@patch` — migrate in Phase C1).
+5. Unit tests in `tests/unit/test_<provider>.py` using `@patch` (existing pattern) or the `responses` library.
 6. Update README (API reference) and bump `__version__` in `invutils/__init__.py`.
 
 ## Testing
@@ -37,4 +37,4 @@ Semver on `invutils/__init__.py::__version__`. Minor bump for new functions, pat
 
 ## Roadmap
 
-See `PLAN.md`.
+See `ROADMAP.md`.

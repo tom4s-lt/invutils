@@ -2,7 +2,8 @@
 .env
 
 # Other files
-PLAN.md
+ROADMAP.md
+CLAUDE.md
 
 # Python
 __pycache__/
