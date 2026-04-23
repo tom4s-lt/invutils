@@ -105,6 +105,25 @@ def mock_llama_price_historical_response() -> Dict[str, Any]:
 
 
 @pytest.fixture
+def mock_llama_price_chart_response() -> Dict[str, Any]:
+    """Mock response for DefiLlama /chart endpoint. Returns 3 daily price points."""
+    return {
+        "coins": {
+            "ethereum:0x0000000000000000000000000000000000000000": {
+                "symbol": "ETH",
+                "confidence": 0.99,
+                "decimals": 18,
+                "prices": [
+                    {"timestamp": 1640908800, "price": 2500.0},
+                    {"timestamp": 1640995200, "price": 2550.0},
+                    {"timestamp": 1641081600, "price": 2600.0},
+                ],
+            }
+        }
+    }
+
+
+@pytest.fixture
 def sample_coin_ids() -> Dict[str, Any]:
     """
     Sample coin IDs for testing.

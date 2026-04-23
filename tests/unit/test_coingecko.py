@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from invutils.prices.coingecko import gecko_price_current, gecko_price_historical
+from invutils.prices.coingecko import gecko_price_chart, gecko_price_current, gecko_price_historical
 
 
 class TestGeckoPriceCurrent:
@@ -198,46 +198,46 @@ class TestGeckoPriceCurrent:
         assert result["fetched_at"] > 1640000000  # After 2021
 
 
-class TestGeckoPriceHistorical:
-    """Test suite for gecko_price_historical function."""
+class TestGeckoPriceChart:
+    """Test suite for gecko_price_chart function."""
 
     # ==================== Input Validation Tests ====================
 
     def test_invalid_id_type(self):
         """Test that non-string id raises TypeError."""
         with pytest.raises(TypeError, match="id must be a string"):
-            gecko_price_historical(123)
+            gecko_price_chart(123)
 
     def test_empty_id_string(self):
         """Test that empty id raises ValueError."""
         with pytest.raises(ValueError, match="id cannot be empty"):
-            gecko_price_historical("")
+            gecko_price_chart("")
 
     def test_whitespace_id_string(self):
         """Test that whitespace-only id raises ValueError."""
         with pytest.raises(ValueError, match="id cannot be empty"):
-            gecko_price_historical("   ")
+            gecko_price_chart("   ")
 
     def test_invalid_vs_currency_type(self):
         """Test that non-string vs_currency raises TypeError."""
         with pytest.raises(TypeError, match="vs_currency must be a string"):
-            gecko_price_historical("bitcoin", vs_currency=123)
+            gecko_price_chart("bitcoin", vs_currency=123)
 
     def test_empty_vs_currency_string(self):
         """Test that empty vs_currency raises ValueError."""
         with pytest.raises(ValueError, match="vs_currency cannot be empty"):
-            gecko_price_historical("bitcoin", vs_currency="")
+            gecko_price_chart("bitcoin", vs_currency="")
 
     def test_invalid_days_type(self):
         """Test that invalid days type raises TypeError."""
         with pytest.raises(TypeError, match="days must be an integer or string"):
-            gecko_price_historical("bitcoin", days=["30"])
+            gecko_price_chart("bitcoin", days=["30"])
 
     def test_valid_days_as_int(self):
         """Test that days can be an integer."""
         with patch("invutils.prices.coingecko.handle_api_request") as mock_handle_api:
             mock_handle_api.return_value = None
-            result = gecko_price_historical("bitcoin", days=30)
+            result = gecko_price_chart("bitcoin", days=30)
             # Should not raise an error, just return error response
             assert result["status"] == "error"
 
@@ -245,7 +245,7 @@ class TestGeckoPriceHistorical:
         """Test that days can be a string."""
         with patch("invutils.prices.coingecko.handle_api_request") as mock_handle_api:
             mock_handle_api.return_value = None
-            result = gecko_price_historical("bitcoin", days="max")
+            result = gecko_price_chart("bitcoin", days="max")
             assert result["status"] == "error"
 
     # ==================== Successful Request Tests ====================
@@ -257,7 +257,7 @@ class TestGeckoPriceHistorical:
         """Test successful historical price request."""
         mock_handle_api.return_value = mock_gecko_price_historical_response
 
-        result = gecko_price_historical("bitcoin", days=30)
+        result = gecko_price_chart("bitcoin", days=30)
 
         assert result["source"] == "coingecko"
         assert result["status"] == "success"
@@ -273,7 +273,7 @@ class TestGeckoPriceHistorical:
         """Test that timestamps are correctly converted from milliseconds to seconds."""
         mock_handle_api.return_value = mock_gecko_price_historical_response
 
-        result = gecko_price_historical("bitcoin")
+        result = gecko_price_chart("bitcoin")
 
         # Verify timestamps are in seconds, not milliseconds
         for item in result["data"]:
@@ -287,7 +287,7 @@ class TestGeckoPriceHistorical:
         """Test that price data has correct structure."""
         mock_handle_api.return_value = mock_gecko_price_historical_response
 
-        result = gecko_price_historical("bitcoin")
+        result = gecko_price_chart("bitcoin")
 
         for item in result["data"]:
             assert "timestamp" in item
@@ -301,7 +301,7 @@ class TestGeckoPriceHistorical:
         """Test that API key is properly passed."""
         mock_handle_api.return_value = mock_gecko_price_historical_response
 
-        result = gecko_price_historical("bitcoin", api_key="test_key_456")
+        result = gecko_price_chart("bitcoin", api_key="test_key_456")
 
         assert result["status"] == "success"
         mock_handle_api.assert_called_once()
@@ -311,7 +311,7 @@ class TestGeckoPriceHistorical:
         """Test with different currency parameter."""
         mock_handle_api.return_value = mock_gecko_price_historical_response
 
-        result = gecko_price_historical("bitcoin", vs_currency="eur")
+        result = gecko_price_chart("bitcoin", vs_currency="eur")
 
         assert result["status"] == "success"
         assert result["currency"] == "eur"
@@ -321,7 +321,7 @@ class TestGeckoPriceHistorical:
         """Test with 'max' days parameter."""
         mock_handle_api.return_value = mock_gecko_price_historical_response
 
-        result = gecko_price_historical("bitcoin", days="max")
+        result = gecko_price_chart("bitcoin", days="max")
 
         assert result["status"] == "success"
         assert result["period"] == {"days": "max"}
@@ -333,7 +333,7 @@ class TestGeckoPriceHistorical:
         """Test handling of API request failure."""
         mock_handle_api.return_value = None
 
-        result = gecko_price_historical("bitcoin")
+        result = gecko_price_chart("bitcoin")
 
         assert result["source"] == "coingecko"
         assert result["status"] == "error"
@@ -350,7 +350,7 @@ class TestGeckoPriceHistorical:
         mock_response = {"market_caps": [], "total_volumes": []}  # Missing 'prices'
         mock_handle_api.return_value = mock_response
 
-        result = gecko_price_historical("bitcoin")
+        result = gecko_price_chart("bitcoin")
 
         assert result["status"] == "error"
         assert result["count"] == 0
@@ -362,7 +362,7 @@ class TestGeckoPriceHistorical:
         mock_response = {"prices": [], "market_caps": [], "total_volumes": []}
         mock_handle_api.return_value = mock_response
 
-        result = gecko_price_historical("bitcoin")
+        result = gecko_price_chart("bitcoin")
 
         # Empty data is still a success (just no data points)
         assert result["status"] == "success"
@@ -377,7 +377,7 @@ class TestGeckoPriceHistorical:
         mock_response = {"prices": [[1640908800000, 45000.0]]}
         mock_handle_api.return_value = mock_response
 
-        result = gecko_price_historical("bitcoin", days=1)
+        result = gecko_price_chart("bitcoin", days=1)
 
         assert result["status"] == "success"
         assert result["count"] == 1
@@ -388,8 +388,26 @@ class TestGeckoPriceHistorical:
         """Test that fetched_at timestamp is included and reasonable."""
         mock_handle_api.return_value = mock_gecko_price_historical_response
 
-        result = gecko_price_historical("bitcoin")
+        result = gecko_price_chart("bitcoin")
 
         assert "fetched_at" in result
         assert isinstance(result["fetched_at"], int)
         assert result["fetched_at"] > 1640000000  # After 2021
+
+
+class TestGeckoPriceHistoricalAlias:
+    """Verify gecko_price_historical is a back-compat alias for gecko_price_chart."""
+
+    def test_alias_is_same_function(self):
+        assert gecko_price_historical is gecko_price_chart
+
+    @patch("invutils.prices.coingecko.handle_api_request")
+    def test_alias_returns_same_result(self, mock_handle_api, mock_gecko_price_historical_response):
+        mock_handle_api.return_value = mock_gecko_price_historical_response
+
+        via_new = gecko_price_chart("bitcoin", days=30)
+        via_alias = gecko_price_historical("bitcoin", days=30)
+
+        assert via_new["status"] == via_alias["status"]
+        assert via_new["coin_id"] == via_alias["coin_id"]
+        assert via_new["count"] == via_alias["count"]

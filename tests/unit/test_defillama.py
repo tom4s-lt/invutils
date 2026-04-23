@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from invutils.prices.defillama import llama_price_historical
+from invutils.prices.defillama import llama_price_chart, llama_price_historical
 
 
 class TestLlamaPriceHistorical:
@@ -374,3 +374,306 @@ class TestLlamaPriceHistorical:
         assert isinstance(result["requested_timestamp"], int)
         assert isinstance(result["count"], int)
         assert isinstance(result["data"], list)
+
+
+class TestLlamaPriceChart:
+    """Test suite for llama_price_chart function."""
+
+    _COIN_ID = "ethereum:0x0000000000000000000000000000000000000000"
+    _START = 1640908800
+    _SPAN = 3
+
+    # ==================== Input Validation ====================
+
+    def test_invalid_id_type(self):
+        with pytest.raises(TypeError, match="id must be a string"):
+            llama_price_chart(123, start=self._START, span=self._SPAN)
+
+    def test_empty_id(self):
+        with pytest.raises(ValueError, match="id cannot be empty"):
+            llama_price_chart("", start=self._START, span=self._SPAN)
+
+    def test_whitespace_id(self):
+        with pytest.raises(ValueError, match="id cannot be empty"):
+            llama_price_chart("   ", start=self._START, span=self._SPAN)
+
+    def test_invalid_start_type(self):
+        with pytest.raises(TypeError, match="start must be an integer"):
+            llama_price_chart(self._COIN_ID, start="2022-01-01", span=self._SPAN)
+
+    def test_invalid_start_float(self):
+        with pytest.raises(TypeError, match="start must be an integer"):
+            llama_price_chart(self._COIN_ID, start=1640908800.5, span=self._SPAN)
+
+    def test_invalid_start_zero(self):
+        with pytest.raises(ValueError, match="start must be positive"):
+            llama_price_chart(self._COIN_ID, start=0, span=self._SPAN)
+
+    def test_invalid_start_negative(self):
+        with pytest.raises(ValueError, match="start must be positive"):
+            llama_price_chart(self._COIN_ID, start=-86400, span=self._SPAN)
+
+    def test_invalid_span_type(self):
+        with pytest.raises(TypeError, match="span must be an integer"):
+            llama_price_chart(self._COIN_ID, start=self._START, span="7")
+
+    def test_invalid_span_zero(self):
+        with pytest.raises(ValueError, match="span must be positive"):
+            llama_price_chart(self._COIN_ID, start=self._START, span=0)
+
+    def test_invalid_span_negative(self):
+        with pytest.raises(ValueError, match="span must be positive"):
+            llama_price_chart(self._COIN_ID, start=self._START, span=-1)
+
+    def test_invalid_period_type(self):
+        with pytest.raises(TypeError, match="period must be a string"):
+            llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN, period=86400)
+
+    def test_invalid_period_value(self):
+        with pytest.raises(ValueError, match="period must be one of"):
+            llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN, period="2d")
+
+    # ==================== Successful Request ====================
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_successful_single_chunk(self, mock_handle_api, mock_llama_price_chart_response):
+        mock_handle_api.return_value = mock_llama_price_chart_response
+
+        result = llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN)
+
+        assert result["source"] == "defillama"
+        assert result["status"] == "success"
+        assert result["coin_id"] == self._COIN_ID
+        assert result["start"] == self._START
+        assert result["span"] == self._SPAN
+        assert result["period"] == "1d"
+        assert result["count"] == 3
+        assert len(result["data"]) == 3
+        assert "fetched_at" in result
+        assert isinstance(result["fetched_at"], int)
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_data_point_structure(self, mock_handle_api, mock_llama_price_chart_response):
+        mock_handle_api.return_value = mock_llama_price_chart_response
+
+        result = llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN)
+
+        for point in result["data"]:
+            assert set(point.keys()) == {"timestamp", "price"}
+            assert isinstance(point["timestamp"], int)
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_period_stored_in_response(self, mock_handle_api, mock_llama_price_chart_response):
+        mock_handle_api.return_value = mock_llama_price_chart_response
+
+        result = llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN, period="1h")
+
+        assert result["period"] == "1h"
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_response_envelope_keys(self, mock_handle_api, mock_llama_price_chart_response):
+        mock_handle_api.return_value = mock_llama_price_chart_response
+
+        result = llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN)
+
+        assert set(result.keys()) == {
+            "source", "fetched_at", "status", "coin_id",
+            "start", "span", "period", "count", "data",
+        }
+
+    # ==================== Pagination ====================
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_pagination_calls_handle_api_twice(self, mock_handle_api, mock_llama_price_chart_response):
+        # span=600 → chunk1 span=500, chunk2 span=100 → 2 calls
+        mock_handle_api.return_value = mock_llama_price_chart_response
+
+        llama_price_chart(self._COIN_ID, start=1609459200, span=600)
+
+        assert mock_handle_api.call_count == 2
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_pagination_accumulates_all_points(self, mock_handle_api):
+        chunk1 = {
+            "coins": {
+                self._COIN_ID: {
+                    "prices": [
+                        {"timestamp": 1609459200, "price": 730.0},
+                        {"timestamp": 1609545600, "price": 740.0},
+                    ]
+                }
+            }
+        }
+        chunk2 = {
+            "coins": {
+                self._COIN_ID: {
+                    "prices": [
+                        {"timestamp": 1652745600, "price": 2800.0},
+                    ]
+                }
+            }
+        }
+        mock_handle_api.side_effect = [chunk1, chunk2]
+
+        result = llama_price_chart(self._COIN_ID, start=1609459200, span=600)
+
+        assert result["count"] == 3
+        prices = [p["price"] for p in result["data"]]
+        assert 730.0 in prices
+        assert 2800.0 in prices
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_single_chunk_when_span_equals_max(self, mock_handle_api, mock_llama_price_chart_response):
+        # span == 500 should be exactly one call
+        mock_handle_api.return_value = mock_llama_price_chart_response
+
+        llama_price_chart(self._COIN_ID, start=self._START, span=500)
+
+        assert mock_handle_api.call_count == 1
+
+    # ==================== Error Handling ====================
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_api_failure_returns_error(self, mock_handle_api):
+        mock_handle_api.return_value = None
+
+        result = llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN)
+
+        assert result["source"] == "defillama"
+        assert result["status"] == "error"
+        assert result["count"] == 0
+        assert result["data"] == []
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_missing_coins_key(self, mock_handle_api):
+        mock_handle_api.return_value = {"data": []}
+
+        result = llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN)
+
+        assert result["status"] == "error"
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_coin_not_in_response(self, mock_handle_api):
+        # Response has a different coin ID
+        mock_handle_api.return_value = {
+            "coins": {
+                "bsc:0x0000000000000000000000000000000000000000": {
+                    "prices": [{"timestamp": self._START, "price": 100.0}]
+                }
+            }
+        }
+
+        result = llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN)
+
+        assert result["status"] == "error"
+        assert result["count"] == 0
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_empty_prices_list(self, mock_handle_api):
+        mock_handle_api.return_value = {
+            "coins": {self._COIN_ID: {"prices": []}}
+        }
+
+        result = llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN)
+
+        assert result["status"] == "error"
+
+    # ==================== Fallback Chain ====================
+
+    def test_fallback_chain_invalid_type(self):
+        with pytest.raises(TypeError, match="fallback_chain must be a string"):
+            llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN, fallback_chain=123)
+
+    def test_fallback_chain_empty_string(self):
+        with pytest.raises(ValueError, match="fallback_chain cannot be empty"):
+            llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN, fallback_chain="")
+
+    def test_fallback_chain_whitespace(self):
+        with pytest.raises(ValueError, match="fallback_chain cannot be empty"):
+            llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN, fallback_chain="  ")
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_fallback_not_called_when_primary_succeeds(self, mock_handle_api, mock_llama_price_chart_response):
+        # Primary returns data → only 1 call, no fallback
+        mock_handle_api.return_value = mock_llama_price_chart_response
+
+        result = llama_price_chart(
+            self._COIN_ID, start=self._START, span=self._SPAN, fallback_chain="arbitrum"
+        )
+
+        assert mock_handle_api.call_count == 1
+        assert result["status"] == "success"
+        assert result["coin_id"] == self._COIN_ID
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_fallback_called_when_primary_empty(self, mock_handle_api):
+        # Primary returns empty → fallback with 'arbitrum' chain. Response must use the
+        # alternate coin_id as the key since that's what _fetch_chart_chunks looks up.
+        alt_id = f"arbitrum:{self._COIN_ID.split(':', 1)[1]}"
+        empty = {"coins": {}}
+        fallback_response = {
+            "coins": {
+                alt_id: {
+                    "prices": [
+                        {"timestamp": 1640908800, "price": 2500.0},
+                        {"timestamp": 1640995200, "price": 2550.0},
+                        {"timestamp": 1641081600, "price": 2600.0},
+                    ]
+                }
+            }
+        }
+        mock_handle_api.side_effect = [empty, fallback_response]
+
+        result = llama_price_chart(
+            self._COIN_ID, start=self._START, span=self._SPAN, fallback_chain="arbitrum"
+        )
+
+        assert mock_handle_api.call_count == 2
+        assert result["status"] == "success"
+        assert result["coin_id"] == alt_id
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_fallback_error_when_both_empty(self, mock_handle_api):
+        # Both primary and fallback return nothing → error
+        empty = {"coins": {}}
+        mock_handle_api.return_value = empty
+
+        result = llama_price_chart(
+            self._COIN_ID, start=self._START, span=self._SPAN, fallback_chain="arbitrum"
+        )
+
+        assert result["status"] == "error"
+        assert result["count"] == 0
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_fallback_not_attempted_when_no_colon_in_id(self, mock_handle_api):
+        # id with no ':' → address cannot be split → fallback is skipped
+        mock_handle_api.return_value = {"coins": {}}
+
+        result = llama_price_chart(
+            "bitcoin", start=self._START, span=self._SPAN, fallback_chain="arbitrum"
+        )
+
+        assert mock_handle_api.call_count == 1
+        assert result["status"] == "error"
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_fallback_not_attempted_when_same_chain(self, mock_handle_api):
+        # fallback_chain same as id's chain → alt_id == id → skip retry
+        mock_handle_api.return_value = {"coins": {}}
+
+        result = llama_price_chart(
+            self._COIN_ID, start=self._START, span=self._SPAN, fallback_chain="ethereum"
+        )
+
+        assert mock_handle_api.call_count == 1
+        assert result["status"] == "error"
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_fallback_none_does_not_retry(self, mock_handle_api):
+        # Default fallback_chain=None → no second call on empty
+        mock_handle_api.return_value = {"coins": {}}
+
+        llama_price_chart(self._COIN_ID, start=self._START, span=self._SPAN)
+
+        assert mock_handle_api.call_count == 1

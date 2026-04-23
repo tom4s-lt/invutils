@@ -100,7 +100,7 @@ def gecko_price_current(
     }
 
 
-def gecko_price_historical(
+def gecko_price_chart(
     id: str, vs_currency: str = "usd", days: Union[int, str] = "365", api_key: Optional[str] = None
 ) -> Dict[str, Any]:
     """
@@ -143,7 +143,7 @@ def gecko_price_historical(
     if not isinstance(days, (int, str)):
         raise TypeError(f"days must be an integer or string, got {type(days).__name__}")
 
-    url = COINGECKO_ENDPOINTS["price_historical"] % (id)
+    url = COINGECKO_ENDPOINTS["price_chart"] % (id)
 
     # Add API key to headers if provided
     headers = {}
@@ -198,3 +198,7 @@ def gecko_price_historical(
         "count": len(data),
         "data": data,
     }
+
+
+# Back-compat alias — will be removed in a future major version
+gecko_price_historical = gecko_price_chart
