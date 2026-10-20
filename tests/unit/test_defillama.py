@@ -523,6 +523,29 @@ class TestLlamaPriceChart:
         assert 2800.0 in prices
 
     @patch("invutils.prices.defillama.handle_api_request")
+    def test_failed_chunk_fails_whole_series(self, mock_handle_api):
+        # chunk1 ok, chunk2 request fails → error, not a series with a 100-day gap
+        chunk1 = {"coins": {self._COIN_ID: {"prices": [{"timestamp": 1609459200, "price": 730.0}]}}}
+        mock_handle_api.side_effect = [chunk1, None]
+
+        result = llama_price_chart(self._COIN_ID, start=1609459200, span=600)
+
+        assert result["status"] == "error"
+        assert result["data"] == []
+
+    @patch("invutils.prices.defillama.handle_api_request")
+    def test_empty_chunk_before_listing_is_kept(self, mock_handle_api):
+        # chunk1 predates the token (empty but successful), chunk2 has data → success
+        chunk1 = {"coins": {}}
+        chunk2 = {"coins": {self._COIN_ID: {"prices": [{"timestamp": 1652745600, "price": 2800.0}]}}}
+        mock_handle_api.side_effect = [chunk1, chunk2]
+
+        result = llama_price_chart(self._COIN_ID, start=1609459200, span=600)
+
+        assert result["status"] == "success"
+        assert result["count"] == 1
+
+    @patch("invutils.prices.defillama.handle_api_request")
     def test_single_chunk_when_span_equals_max(self, mock_handle_api, mock_llama_price_chart_response):
         # span == 500 should be exactly one call
         mock_handle_api.return_value = mock_llama_price_chart_response

@@ -1,13 +1,12 @@
 """Twelve Data API functions for traditional asset price data."""
 
 import logging
-import time
 from typing import Any, Dict
 
 import requests
 
 from ..config import DEFAULT_TIMEOUT, TWELVEDATA_ENDPOINTS
-from ..utils import handle_api_request
+from ..utils import envelope, handle_api_request
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +14,17 @@ _VALID_INTERVALS = {
     "1min", "5min", "15min", "30min", "45min",
     "1h", "2h", "4h", "8h", "1day", "1week", "1month",
 }
+
+
+def _auth(api_key: str) -> Dict[str, str]:
+    # Header, not ?apikey=: requests puts the full URL in exception text, which gets logged
+    return {"Authorization": f"apikey {api_key}"}
+
+
+def _log_api_error(symbol: str, raw_result: Any) -> None:
+    # Twelve Data reports errors as HTTP 200 + {"code", "message", "status": "error"}
+    if isinstance(raw_result, dict):
+        logger.error("twelvedata %s: %s", symbol, raw_result.get("message", raw_result))
 
 
 def twelvedata_price_current(symbol: str, api_key: str) -> Dict[str, Any]:
@@ -49,30 +59,17 @@ def twelvedata_price_current(symbol: str, api_key: str) -> Dict[str, Any]:
         "twelvedata",
         lambda: requests.get(
             TWELVEDATA_ENDPOINTS["price_current"],
-            params={"symbol": symbol, "apikey": api_key},
+            params={"symbol": symbol},
+            headers=_auth(api_key),
             timeout=DEFAULT_TIMEOUT,
         ),
-        DEFAULT_TIMEOUT,
     )
 
-    fetched_at = int(time.time())
-
     if raw_result is None or "price" not in raw_result:
-        return {
-            "source": "twelvedata",
-            "fetched_at": fetched_at,
-            "status": "error",
-            "count": 0,
-            "data": [],
-        }
+        _log_api_error(symbol, raw_result)
+        return envelope("twelvedata", [])
 
-    return {
-        "source": "twelvedata",
-        "fetched_at": fetched_at,
-        "status": "success",
-        "count": 1,
-        "data": [{"symbol": symbol.upper(), "price": float(raw_result["price"])}],
-    }
+    return envelope("twelvedata", [{"symbol": symbol.upper(), "price": float(raw_result["price"])}])
 
 
 def twelvedata_price_historical(
@@ -141,25 +138,15 @@ def twelvedata_price_historical(
                 "symbol": symbol,
                 "interval": interval,
                 "outputsize": outputsize,
-                "apikey": api_key,
             },
+            headers=_auth(api_key),
             timeout=DEFAULT_TIMEOUT,
         ),
-        DEFAULT_TIMEOUT,
     )
 
-    fetched_at = int(time.time())
-
     if raw_result is None or "values" not in raw_result:
-        return {
-            "source": "twelvedata",
-            "fetched_at": fetched_at,
-            "status": "error",
-            "symbol": symbol.upper(),
-            "interval": interval,
-            "count": 0,
-            "data": [],
-        }
+        _log_api_error(symbol, raw_result)
+        return envelope("twelvedata", [], symbol=symbol.upper(), interval=interval)
 
     data: list = []
     for entry in raw_result["values"]:
@@ -175,16 +162,4 @@ def twelvedata_price_historical(
             row["volume"] = int(volume)
         data.append(row)
 
-    return {
-        "source": "twelvedata",
-        "fetched_at": fetched_at,
-        "status": "success" if data else "error",
-        "symbol": symbol.upper(),
-        "interval": interval,
-        "count": len(data),
-        "data": data,
-    }
-
-
-# Convenience alias matching the naming pattern of other providers
-twelvedata_price_chart = twelvedata_price_historical
+    return envelope("twelvedata", data, symbol=symbol.upper(), interval=interval)

@@ -162,7 +162,7 @@ result = twelvedata_price_current('AAPL', api_key='your-key')
 
 ### `twelvedata_price_historical(symbol, api_key, interval='1day', outputsize=30)`
 
-Get historical OHLCV time series. Alias: `twelvedata_price_chart`.
+Get historical OHLCV time series.
 
 **Parameters:**
 

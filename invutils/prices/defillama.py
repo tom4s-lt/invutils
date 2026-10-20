@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 import requests
 
 from ..config import DEFAULT_TIMEOUT, DEFILLAMA_ENDPOINTS
-from ..utils import handle_api_request
+from ..utils import envelope, handle_api_request
 
 # Set up logger for this module
 logger = logging.getLogger(__name__)
@@ -73,23 +73,10 @@ def llama_price_historical(id: str, timestamp: Optional[int] = None) -> Dict[str
     url = DEFILLAMA_ENDPOINTS["price_historical"] % (timestamp, id)
 
     # Make request with error handling
-    raw_result = handle_api_request(
-        "defillama", lambda: requests.get(url, timeout=DEFAULT_TIMEOUT), DEFAULT_TIMEOUT
-    )
+    raw_result = handle_api_request("defillama", lambda: requests.get(url, timeout=DEFAULT_TIMEOUT))
 
-    # Build standardized response
-    fetched_at = int(time.time())
-
-    # Check if result is valid and has 'coins' key
     if raw_result is None or "coins" not in raw_result:
-        return {
-            "source": "defillama",
-            "fetched_at": fetched_at,
-            "status": "error",
-            "requested_timestamp": timestamp,
-            "count": 0,
-            "data": [],
-        }
+        return envelope("defillama", [], requested_timestamp=timestamp)
 
     # Transform raw API response to standard format
     # DefiLlama returns: {'chain:address': {'symbol': ..., 'price': ..., ...}}
@@ -106,20 +93,17 @@ def llama_price_historical(id: str, timestamp: Optional[int] = None) -> Dict[str
             }
         )
 
-    return {
-        "source": "defillama",
-        "fetched_at": fetched_at,
-        "status": "success" if data else "error",
-        "requested_timestamp": timestamp,
-        "count": len(data),
-        "data": data,
-    }
+    return envelope("defillama", data, requested_timestamp=timestamp)
 
 
 def _fetch_chart_chunks(
     coin_id: str, start: int, span: int, period: str, period_seconds: int
 ) -> List[Dict[str, Any]]:
-    """Fetch all paginated chunks for a single coin_id from the /chart endpoint."""
+    """Fetch all paginated chunks for a single coin_id from the /chart endpoint.
+
+    Returns [] if any chunk's request fails, so a gap never passes as a full series.
+    An empty chunk in a successful response is kept (e.g. range starts before listing).
+    """
     url = DEFILLAMA_ENDPOINTS["price_chart"] % coin_id
     points: List[Dict[str, Any]] = []
     remaining = span
@@ -135,11 +119,14 @@ def _fetch_chart_chunks(
                 params={"start": s, "span": n, "period": p},
                 timeout=DEFAULT_TIMEOUT,
             ),
-            DEFAULT_TIMEOUT,
         )
 
-        if raw_result is not None and "coins" in raw_result:
-            points.extend(raw_result["coins"].get(coin_id, {}).get("prices", []))
+        if raw_result is None or "coins" not in raw_result:
+            logger.warning(
+                "defillama chart: %s chunk at %s failed, dropping series", coin_id, chunk_start
+            )
+            return []
+        points.extend(raw_result["coins"].get(coin_id, {}).get("prices", []))
 
         remaining -= chunk_span
         chunk_start += chunk_span * period_seconds
@@ -234,31 +221,6 @@ def llama_price_chart(
                 all_points = alt_points
                 effective_id = alt_id
 
-    fetched_at = int(time.time())
-
-    if not all_points:
-        return {
-            "source": "defillama",
-            "fetched_at": fetched_at,
-            "status": "error",
-            "coin_id": effective_id,
-            "start": start,
-            "span": span,
-            "period": period,
-            "count": 0,
-            "data": [],
-        }
-
     data = [{"timestamp": int(p["timestamp"]), "price": p["price"]} for p in all_points]
 
-    return {
-        "source": "defillama",
-        "fetched_at": fetched_at,
-        "status": "success",
-        "coin_id": effective_id,
-        "start": start,
-        "span": span,
-        "period": period,
-        "count": len(data),
-        "data": data,
-    }
+    return envelope("defillama", data, coin_id=effective_id, start=start, span=span, period=period)

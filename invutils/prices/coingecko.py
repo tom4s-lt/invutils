@@ -1,16 +1,11 @@
 """CoinGecko API functions for cryptocurrency price data."""
 
-import logging
-import time
 from typing import Any, Dict, Optional, Union
 
 import requests
 
 from ..config import COINGECKO_ENDPOINTS, DEFAULT_TIMEOUT
-from ..utils import handle_api_request
-
-# Set up logger for this module
-logger = logging.getLogger(__name__)
+from ..utils import envelope, handle_api_request
 
 
 def gecko_price_current(
@@ -50,6 +45,8 @@ def gecko_price_current(
         raise ValueError("vs_currencies cannot be empty or whitespace")
 
     url = COINGECKO_ENDPOINTS["price_current"]
+    # CoinGecko keys its response by lowercase currency; normalize so "USD" or "usd, eur" match
+    currencies_list = [c.strip().lower() for c in vs_currencies.split(",")]
 
     # Add API key to headers if provided
     headers = {}
@@ -61,29 +58,17 @@ def gecko_price_current(
         "coingecko",
         lambda: requests.get(
             url,
-            params={"ids": id, "vs_currencies": vs_currencies},
+            params={"ids": id, "vs_currencies": ",".join(currencies_list)},
             headers=headers,
             timeout=DEFAULT_TIMEOUT,
         ),
-        DEFAULT_TIMEOUT,
     )
 
-    # Build standardized response
-    fetched_at = int(time.time())
-
     if raw_result is None:
-        return {
-            "source": "coingecko",
-            "fetched_at": fetched_at,
-            "status": "error",
-            "count": 0,
-            "data": [],
-        }
+        return envelope("coingecko", [])
 
     # Transform raw API response to standard format
     data = []
-    currencies_list = vs_currencies.split(",")
-
     for coin_id, price_data in raw_result.items():
         for currency in currencies_list:
             if currency in price_data:
@@ -91,13 +76,7 @@ def gecko_price_current(
                     {"coin_id": coin_id, "price": price_data[currency], "currency": currency}
                 )
 
-    return {
-        "source": "coingecko",
-        "fetched_at": fetched_at,
-        "status": "success" if data else "error",
-        "count": len(data),
-        "data": data,
-    }
+    return envelope("coingecko", data)
 
 
 def gecko_price_chart(
@@ -159,45 +138,13 @@ def gecko_price_chart(
             headers=headers,
             timeout=DEFAULT_TIMEOUT,
         ),
-        DEFAULT_TIMEOUT,
     )
 
-    # Build standardized response
-    fetched_at = int(time.time())
-
-    if raw_result is None or "prices" not in raw_result:
-        return {
-            "source": "coingecko",
-            "fetched_at": fetched_at,
-            "status": "error",
-            "coin_id": id,
-            "currency": vs_currency,
-            "period": {"days": days},
-            "count": 0,
-            "data": [],
-        }
-
-    # Transform raw API response to standard format
     # CoinGecko returns: [[timestamp_ms, price], ...]
-    data = []
-    for timestamp_ms, price in raw_result["prices"]:
-        data.append(
-            {
-                "timestamp": int(timestamp_ms / 1000),  # Convert ms to seconds
-                "price": price,
-            }
-        )
+    prices = raw_result.get("prices", []) if raw_result else []
+    data = [{"timestamp": int(ts_ms / 1000), "price": price} for ts_ms, price in prices]
 
-    return {
-        "source": "coingecko",
-        "fetched_at": fetched_at,
-        "status": "success",
-        "coin_id": id,
-        "currency": vs_currency,
-        "period": {"days": days},
-        "count": len(data),
-        "data": data,
-    }
+    return envelope("coingecko", data, coin_id=id, currency=vs_currency, period={"days": days})
 
 
 # Back-compat alias — will be removed in a future major version

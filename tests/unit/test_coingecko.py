@@ -162,6 +162,16 @@ class TestGeckoPriceCurrent:
         assert result["count"] == 1
         assert result["data"][0]["currency"] == "usd"
 
+    @patch("invutils.prices.coingecko.handle_api_request")
+    def test_currencies_case_and_spaces_normalized(self, mock_handle_api):
+        """CoinGecko keys responses by lowercase currency; 'USD, EUR' must still match."""
+        mock_handle_api.return_value = {"bitcoin": {"usd": 45000.0, "eur": 38000.0}}
+
+        result = gecko_price_current("bitcoin", vs_currencies="USD, EUR")
+
+        assert result["count"] == 2
+        assert [d["currency"] for d in result["data"]] == ["usd", "eur"]
+
     # ==================== Data Transformation Tests ====================
 
     @patch("invutils.prices.coingecko.handle_api_request")
@@ -364,8 +374,8 @@ class TestGeckoPriceChart:
 
         result = gecko_price_chart("bitcoin")
 
-        # Empty data is still a success (just no data points)
-        assert result["status"] == "success"
+        # Empty data is an error, same rule as every other function
+        assert result["status"] == "error"
         assert result["count"] == 0
         assert result["data"] == []
 

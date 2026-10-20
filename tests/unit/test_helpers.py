@@ -24,7 +24,7 @@ class TestHandleApiRequest:
             return mock_response
 
         # Execute
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         # Assert
         assert result == {"success": True, "data": [1, 2, 3]}
@@ -42,7 +42,7 @@ class TestHandleApiRequest:
         def request_func():
             return mock_response
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
 
@@ -57,7 +57,7 @@ class TestHandleApiRequest:
         def request_func():
             return mock_response
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
 
@@ -72,7 +72,7 @@ class TestHandleApiRequest:
         def request_func():
             return mock_response
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
 
@@ -87,7 +87,7 @@ class TestHandleApiRequest:
         def request_func():
             return mock_response
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
 
@@ -97,7 +97,7 @@ class TestHandleApiRequest:
         def request_func():
             raise requests.exceptions.Timeout("Request timed out")
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
 
@@ -107,7 +107,7 @@ class TestHandleApiRequest:
         def request_func():
             raise requests.exceptions.ConnectionError("Failed to connect")
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
 
@@ -117,7 +117,7 @@ class TestHandleApiRequest:
         def request_func():
             raise requests.exceptions.RequestException("Something went wrong")
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
 
@@ -130,22 +130,10 @@ class TestHandleApiRequest:
         def request_func():
             return mock_response
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
 
-    def test_key_error(self):
-        """Test handling of KeyError during response processing."""
-        mock_response = Mock()
-        mock_response.raise_for_status = Mock()
-        mock_response.json.side_effect = KeyError("Missing key")
-
-        def request_func():
-            return mock_response
-
-        result = handle_api_request("TestAPI", request_func, 10)
-
-        assert result is None
 
     def test_empty_json_response(self):
         """Test successful handling of empty JSON object."""
@@ -156,7 +144,7 @@ class TestHandleApiRequest:
         def request_func():
             return mock_response
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result == {}
 
@@ -177,7 +165,7 @@ class TestHandleApiRequest:
         def request_func():
             return mock_response
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result == complex_data
         assert result["data"]["items"][0]["value"] == 100
@@ -194,7 +182,7 @@ class TestHandleApiRequest:
         def request_func():
             return mock_response
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
         mock_logger.error.assert_called_once()
@@ -205,19 +193,18 @@ class TestHandleApiRequest:
 
     @patch("invutils.utils.helpers.logger")
     def test_logging_on_timeout(self, mock_logger):
-        """Test that timeout errors are logged with timeout value."""
+        """Test that timeout errors are logged with the exception text."""
 
         def request_func():
-            raise requests.exceptions.Timeout("Request timed out")
+            raise requests.exceptions.Timeout("Read timed out. (read timeout=15)")
 
-        result = handle_api_request("TestAPI", request_func, 15)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
         mock_logger.error.assert_called_once()
-        # Verify the log message contains the API name and timeout
         log_call_args = str(mock_logger.error.call_args)
         assert "TestAPI" in log_call_args
-        assert "15" in log_call_args
+        assert "read timeout=15" in log_call_args
 
     @patch("invutils.utils.helpers.logger")
     def test_logging_on_connection_error(self, mock_logger):
@@ -226,13 +213,13 @@ class TestHandleApiRequest:
         def request_func():
             raise requests.exceptions.ConnectionError("DNS resolution failed")
 
-        result = handle_api_request("TestAPI", request_func, 10)
+        result = handle_api_request("TestAPI", request_func)
 
         assert result is None
         mock_logger.error.assert_called_once()
         log_call_args = str(mock_logger.error.call_args)
         assert "TestAPI" in log_call_args
-        assert "Connection Error" in log_call_args
+        assert "DNS resolution failed" in log_call_args
 
     def test_different_api_names(self):
         """Test that function works with different API names."""
@@ -245,19 +232,5 @@ class TestHandleApiRequest:
 
         # Test with different API names
         for api_name in ["CoinGecko", "DefiLlama", "CustomAPI", "Test-API-123"]:
-            result = handle_api_request(api_name, request_func, 10)
-            assert result == {"test": "data"}
-
-    def test_different_timeout_values(self):
-        """Test that function accepts different timeout values."""
-        mock_response = Mock()
-        mock_response.json.return_value = {"test": "data"}
-        mock_response.raise_for_status = Mock()
-
-        def request_func():
-            return mock_response
-
-        # Test with different timeout values
-        for timeout in [1, 5, 10, 30, 60]:
-            result = handle_api_request("TestAPI", request_func, timeout)
+            result = handle_api_request(api_name, request_func)
             assert result == {"test": "data"}

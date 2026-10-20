@@ -1,11 +1,11 @@
 """Unit tests for invutils.prices.twelvedata module."""
 
+import logging
 from unittest.mock import patch
 
 import pytest
 
 from invutils.prices.twelvedata import (
-    twelvedata_price_chart,
     twelvedata_price_current,
     twelvedata_price_historical,
 )
@@ -286,19 +286,27 @@ class TestTwelvedataPriceHistorical:
         assert result["interval"] == "1week"
 
 
-class TestTwelvedataPriceChartAlias:
-    """Verify twelvedata_price_chart is an alias for twelvedata_price_historical."""
 
-    def test_alias_is_same_function(self):
-        assert twelvedata_price_chart is twelvedata_price_historical
+class TestTwelvedataAuthAndErrors:
+    """API key stays out of the URL; error bodies are logged."""
+
+    @patch("invutils.prices.twelvedata.requests.get")
+    def test_api_key_sent_as_header_not_query(self, mock_get):
+        mock_get.return_value.json.return_value = {"price": "1.0"}
+
+        twelvedata_price_current("AAPL", "secret-key")
+        twelvedata_price_historical("AAPL", "secret-key")
+
+        for call in mock_get.call_args_list:
+            assert "apikey" not in call.kwargs["params"]
+            assert call.kwargs["headers"] == {"Authorization": "apikey secret-key"}
 
     @patch("invutils.prices.twelvedata.handle_api_request")
-    def test_alias_returns_same_result(self, mock_handle_api, mock_twelvedata_price_historical_response):
-        mock_handle_api.return_value = mock_twelvedata_price_historical_response
+    def test_error_body_message_is_logged(self, mock_handle_api, caplog):
+        mock_handle_api.return_value = {"code": 429, "message": "out of API credits", "status": "error"}
 
-        via_historical = twelvedata_price_historical("AAPL", "test-key")
-        via_chart = twelvedata_price_chart("AAPL", "test-key")
+        with caplog.at_level(logging.ERROR, logger="invutils.prices.twelvedata"):
+            twelvedata_price_current("AAPL", "test-key")
+            twelvedata_price_historical("AAPL", "test-key")
 
-        assert via_historical["status"] == via_chart["status"]
-        assert via_historical["count"] == via_chart["count"]
-        assert via_historical["symbol"] == via_chart["symbol"]
+        assert caplog.text.count("out of API credits") == 2

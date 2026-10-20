@@ -1,7 +1,8 @@
 """Helper utilities for invutils package."""
 
 import logging
-from typing import Any, Callable, Dict, Optional
+import time
+from typing import Any, Callable, Dict, List, Optional
 
 import requests
 
@@ -10,10 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 def handle_api_request(
-    api_name: str,
-    request_func: Callable[[],
-    requests.Response], timeout: int
-) -> Optional[Dict[str, Any]]:
+    api_name: str, request_func: Callable[[], requests.Response]
+) -> Optional[Any]:
     """
     Handle API requests with consistent error handling.
 
@@ -23,16 +22,14 @@ def handle_api_request(
     Args:
         api_name: Name of the API for logging (e.g., 'CoinGecko', 'DefiLlama')
         request_func: Function that makes the API request and returns Response object
-        timeout: Timeout value used in the request (for logging purposes)
 
     Returns:
-        Parsed JSON response as dict, or None on error
+        Parsed JSON response, or None on error
 
     Example:
         >>> result = handle_api_request(
         ...     'CoinGecko',
         ...     lambda: requests.get(url, params=params, timeout=10),
-        ...     10
         ... )
     """
     try:
@@ -41,28 +38,33 @@ def handle_api_request(
         return res.json()
 
     except requests.exceptions.HTTPError as e:
-        # Server returned error status (400, 404, 500, etc.)
+        # Server returned error status (400, 404, 429, 500, etc.)
         logger.error(f"{api_name} HTTP Error {e.response.status_code}: {e}")
         return None
 
-    except requests.exceptions.Timeout:
-        # Request took longer than timeout seconds
-        logger.error(f"{api_name} Timeout Error: Request took longer than {timeout}s")
-        return None
-
-    except requests.exceptions.ConnectionError as e:
-        # Network problem (DNS failure, refused connection, etc.)
-        logger.error(f"{api_name} Connection Error: Could not connect to API - {e}")
+    except ValueError as e:
+        # JSON decode error (checked before RequestException: requests' JSONDecodeError is both)
+        logger.error(f"{api_name} Response Error: Invalid JSON response - {e}")
         return None
 
     except requests.exceptions.RequestException as e:
-        # Catch-all for any other requests errors
+        # Timeout, connection failure, or any other requests error
         logger.error(f"{api_name} Request Error: {e}")
         return None
 
-    except (ValueError, KeyError) as e:
-        # JSON decode error or missing expected key
-        logger.error(f"{api_name} Response Error: Invalid or unexpected response format - {e}")
-        return None
 
+def envelope(source: str, data: List[Dict[str, Any]], **extra: Any) -> Dict[str, Any]:
+    """
+    Build the standardized response dict shared by every public function.
 
+    Status is "success" only when data is non-empty. Extra keys (coin_id, period, ...)
+    sit between status and count.
+    """
+    return {
+        "source": source,
+        "fetched_at": int(time.time()),
+        "status": "success" if data else "error",
+        **extra,
+        "count": len(data),
+        "data": data,
+    }
