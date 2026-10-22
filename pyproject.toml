@@ -131,3 +131,12 @@ ignore = [
 quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
+
+[tool.uv]
+# Release cooldown: skip versions published <7 days ago (hijacked releases are usually pulled within hours)
+exclude-newer = "7 days"
+# Lock for the dev environment only — requires-python (>=3.7) is the library's support claim,
+# but the dev extras (mypy, hypothesis) need 3.10+
+environments = ["python_version >= '3.10'"]
+# Cooldown exception: certifi 2026.10.19 fixes PYSEC-2026-4320
+exclude-newer-package = { certifi = "2026-10-22T00:00:00Z" }

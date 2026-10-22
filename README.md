@@ -104,7 +104,7 @@ tests/
 Install development dependencies:
 
 ```bash
-pip install ".[dev]"
+uv sync --all-extras   # .venv from uv.lock, with the dev extras
 ```
 
 For integration tests (yet to come), create a `.env` file with your API keys:
@@ -118,13 +118,13 @@ TWELVEDATA_API_KEY=your_twelvedata_key_here
 
 ```bash
 # Run all unit tests (fast, no API calls)
-pytest -m "not integration"
+uv run pytest -m "not integration"
 
 # Run all tests including integration tests
-pytest
+uv run pytest
 
 # Run with coverage report
-pytest --cov=invutils --cov-report=html
+uv run pytest --cov=invutils --cov-report=html
 ```
 
 **Note**: Unit tests run quickly without API keys. Integration tests make real API calls and require API keys in the `.env` file.
