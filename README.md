@@ -14,7 +14,14 @@ A lightweight Python package for retrieving investment price data from CoinGecko
 ## Installation
 
 ```bash
-pip install git+https://github.com/xtom4s/invutils
+uv add "invutils @ git+https://github.com/tom4s-lt/invutils"
+```
+
+From a sibling local checkout, declare it as a path source instead (as `personal-finance` does):
+
+```toml
+[tool.uv.sources]
+invutils = { path = "../modules/invutils", editable = true }
 ```
 
 ## Quick Start
